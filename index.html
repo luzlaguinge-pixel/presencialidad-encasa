@@ -183,7 +183,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
           </div>
         </div>
         <div id="reg-form">
-          <div class="week-nav-label" id="week-label">Semana actual</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <button onclick="cambiarSemana(-1)" style="background:#f0f2f9;border:none;border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;color:#516ADC;font-family:'Nunito',sans-serif;">‹</button>
+            <div class="week-nav-label" id="week-label" style="margin-bottom:0;">Semana actual</div>
+            <button onclick="cambiarSemana(1)" style="background:#f0f2f9;border:none;border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;color:#516ADC;font-family:'Nunito',sans-serif;">›</button>
+          </div>
           <div class="legend">
             <div class="legend-item"><div class="legend-dot" style="background:#1aba7c;"></div>Presencial</div>
             <div class="legend-item"><div class="legend-dot" style="background:#516ADC;"></div>Remoto</div>
@@ -219,16 +223,59 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7pQaMZ-aYdMrZZgguh
 const ADMIN_DNI = '12345678';
 let currentUser = null;
 let dayStates = {lun:null,mar:null,mie:null,jue:null,vie:null};
+let semanaOffset = 0; // 0 = semana actual, 1 = próxima semana, etc.
 
-function getSemana() {
+function getSemana(offset) {
+  offset = offset || 0;
   const hoy = new Date();
   const dia = hoy.getDay();
   const lunes = new Date(hoy);
-  lunes.setDate(hoy.getDate() - (dia === 0 ? 6 : dia - 1));
+  lunes.setDate(hoy.getDate() - (dia === 0 ? 6 : dia - 1) + (offset * 7));
   const viernes = new Date(lunes);
   viernes.setDate(lunes.getDate() + 4);
   const fmt = d => d.toLocaleDateString('es-AR', {day:'2-digit',month:'short'});
   return fmt(lunes) + '–' + fmt(viernes) + ' ' + lunes.getFullYear();
+}
+
+function precargarDias(reg) {
+  const dias = ['lun','mar','mie','jue','vie'];
+  dias.forEach((d, i) => {
+    const el = document.querySelectorAll('.day-toggle')[i];
+    const val = reg[d];
+    if (val === 'presencial') {
+      dayStates[d] = 'presencial';
+      el.className = 'day-toggle presencial';
+      el.querySelector('.d-sel').textContent = 'Pres.';
+    } else if (val === 'remoto') {
+      dayStates[d] = 'remoto';
+      el.className = 'day-toggle remoto';
+      el.querySelector('.d-sel').textContent = 'Rem.';
+    }
+  });
+  updateCounter();
+}
+
+function cambiarSemana(delta) {
+  semanaOffset += delta;
+  const semana = getSemana(semanaOffset);
+  document.getElementById('week-label').textContent = semana;
+  document.getElementById('topbar-week').textContent = semana;
+  // Reset días al cambiar de semana
+  dayStates = {lun:null,mar:null,mie:null,jue:null,vie:null};
+  document.querySelectorAll('.day-toggle').forEach(d => {
+    d.className = 'day-toggle';
+    d.querySelector('.d-sel').textContent = '—';
+  });
+  updateCounter();
+  // Ocultar éxito si estaba visible
+  document.getElementById('success-msg').style.display = 'none';
+  document.getElementById('reg-form').style.display = 'block';
+  // Buscar si ya registró esa semana
+  const semana = getSemana(semanaOffset);
+  document.getElementById('week-label').textContent = semana;
+  document.getElementById('topbar-week').textContent = semana;
+  const reg = (currentUser.historial || []).find(r => r.semana === semana);
+  if (reg) precargarDias(reg);
 }
 
 async function apiCall(params) {
@@ -255,7 +302,7 @@ async function doLogin() {
     if (data.ok && data.nombre) {
       const parts = data.nombre.trim().split(' ');
       const initials = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
-      currentUser = {name:data.nombre, role:'colab', initials, dni, historial:data.registros};
+      currentUser = {name:data.nombre, role:data.rol||'colab', initials, dni, historial:data.registros};
       mostrarApp();
     } else {
       document.getElementById('login-error').style.display = 'block';
@@ -277,8 +324,15 @@ function mostrarApp() {
 
   if (currentUser.role === 'admin') {
     document.getElementById('admin-view').style.display = 'block';
+    // Admin también ve su propia vista de registro
+    mostrarVistaColab();
     cargarAdmin();
   } else {
+    mostrarVistaColab();
+  }
+}
+
+function mostrarVistaColab() {
     document.getElementById('colab-view').style.display = 'block';
     document.getElementById('colab-initials').textContent = currentUser.initials;
     document.getElementById('colab-name').textContent = currentUser.name;
@@ -335,12 +389,12 @@ async function submitRegistro() {
   try {
     const data = await apiCall({
       action:'guardar', dni:currentUser.dni, nombre:currentUser.name,
-      semana:getSemana(),
+      semana:getSemana(semanaOffset),
       lun:dayStates.lun||'', mar:dayStates.mar||'', mie:dayStates.mie||'',
       jue:dayStates.jue||'', vie:dayStates.vie||''
     });
     if (data.ok) {
-      document.getElementById('success-sub').textContent = 'Tu modalidad quedó guardada para ' + getSemana() + '.';
+      document.getElementById('success-sub').textContent = 'Tu modalidad quedó guardada para ' + getSemana(semanaOffset) + '.';
       document.getElementById('reg-form').style.display = 'none';
       document.getElementById('success-msg').style.display = 'block';
       const hist = await apiCall({action:'leerColaborador', dni:currentUser.dni});
