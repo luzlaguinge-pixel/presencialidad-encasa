@@ -155,11 +155,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
           </div>
         </div>
         <div id="reg-form">
-          <div class="week-nav">
+          <div class="week-nav" id="week-nav-ctrl">
             <button class="week-btn" onclick="navegarSemana(-1)">&#8249;</button>
             <span class="week-label" id="semana-label"></span>
             <button class="week-btn" onclick="navegarSemana(1)">&#8250;</button>
           </div>
+          <div id="form-contenido">
           <div class="legend">
             <div class="legend-item"><div class="legend-dot" style="background:#1aba7c;"></div>Presencial</div>
             <div class="legend-item"><div class="legend-dot" style="background:#516ADC;"></div>Remoto</div>
@@ -175,11 +176,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
           </div>
           <div class="days-counter" id="dias-contador">0 de 5 días definidos</div>
           <button class="submit-btn" id="guardar-btn" onclick="guardarSemana()" disabled>Guardar semana</button>
+          </div>
         </div>
         <div class="success-msg" id="success-msg">
           <div class="success-icon">✓</div>
           <div class="success-title">¡Semana registrada!</div>
           <div class="success-sub" id="success-texto"></div>
+          <button onclick="registrarOtraSemana()" style="margin-top:16px;padding:10px 20px;background:#f0f2f9;border:none;border-radius:10px;font-size:13px;font-weight:600;color:#516ADC;cursor:pointer;font-family:'Nunito',sans-serif;">Registrar otra semana</button>
         </div>
       </div>
       <div class="card">
@@ -266,10 +269,16 @@ function actualizarSemanaColab() {
   if (reg) precargarDias(reg);
 }
 
+function registrarOtraSemana() {
+  document.getElementById('success-msg').style.display = 'none';
+  document.getElementById('form-contenido').style.display = 'block';
+  navegarSemana(1);
+}
+
 function navegarSemana(delta) {
   semanaOffset += delta;
   document.getElementById('success-msg').style.display = 'none';
-  document.getElementById('reg-form').style.display = 'block';
+  document.getElementById('form-contenido').style.display = 'block';
   actualizarSemanaColab();
 }
 
