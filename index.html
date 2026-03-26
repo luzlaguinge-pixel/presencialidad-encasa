@@ -1,7 +1,13 @@
 const SHEET_NAME = 'En Casa | Presencialidad';
 
-function doOptions(e) {
-  return ContentService.createTextOutput('').setMimeType(ContentService.MimeType.TEXT);
+function getSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    // Fallback: usar la primera hoja si no encuentra por nombre
+    return ss.getSheets()[0];
+  }
+  return sheet;
 } // Cambiá si tu hoja tiene otro nombre
 
 function doGet(e) {
@@ -35,8 +41,7 @@ function handleRequest(e) {
 
 function guardarRegistro(p) {
   try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName(SHEET_NAME);
+    const sheet = getSheet();
 
     // Verificar si ya existe un registro para este DNI y semana
     const data = sheet.getDataRange().getValues();
@@ -67,8 +72,7 @@ function guardarRegistro(p) {
 
 function leerRegistros(p) {
   try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName(SHEET_NAME);
+    const sheet = getSheet();
     const data = sheet.getDataRange().getValues();
 
     const semana = p.semana;
@@ -98,8 +102,7 @@ function leerRegistros(p) {
 
 function leerColaborador(p) {
   try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = ss.getSheetByName(SHEET_NAME);
+    const sheet = getSheet();
     const data = sheet.getDataRange().getValues();
 
     const registros = [];
