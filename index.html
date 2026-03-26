@@ -69,8 +69,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 .self-name{font-size:16px;font-weight:700;color:#1a1a2e;}
 .self-dni{font-size:12px;color:#bbb;font-weight:500;}
 .week-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.week-btn{background:#f0f2f9;border:none;border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;color:#516ADC;}
+.week-btn{background:#f0f2f9;border:none;border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;color:#516ADC;font-family:'Nunito',sans-serif;}
 .week-label{font-size:14px;font-weight:700;color:#333;}
+.success-banner{background:#e8fdf2;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:none;align-items:center;gap:8px;}
+.success-banner span.icon{color:#0a7a4e;font-size:18px;}
+.success-banner span.txt{color:#0a7a4e;font-size:13px;font-weight:600;}
 .legend{display:flex;gap:14px;margin-bottom:12px;flex-wrap:wrap;}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:#777;font-weight:600;}
 .legend-dot{width:9px;height:9px;border-radius:50%;}
@@ -86,10 +89,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 .days-counter{margin-top:8px;font-size:12px;color:#bbb;text-align:center;font-weight:500;}
 .submit-btn{width:100%;padding:14px;background:#516ADC;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;margin-top:16px;}
 .submit-btn:disabled{background:#c4ccf0;cursor:not-allowed;}
-.success-msg{text-align:center;padding:24px 16px;display:none;}
-.success-icon{width:56px;height:56px;background:#e8fdf2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px;}
-.success-title{font-size:17px;font-weight:700;color:#0a7a4e;margin-bottom:6px;}
-.success-sub{font-size:13px;color:#aaa;font-weight:500;}
 </style>
 </head>
 <body>
@@ -154,37 +153,30 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
             <div class="self-dni" id="colab-dni"></div>
           </div>
         </div>
-        <div id="reg-form">
-          <div id="success-banner" style="display:none;background:#e8fdf2;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:none;align-items:center;gap:8px;">
-            <span style="color:#0a7a4e;font-size:18px;">✓</span>
-            <span style="color:#0a7a4e;font-size:13px;font-weight:600;" id="banner-texto"></span>
-          </div>
-          <div class="week-nav">
-            <button class="week-btn" onclick="navegarSemana(-1)">&#8249;</button>
-            <span class="week-label" id="semana-label"></span>
-            <button class="week-btn" onclick="navegarSemana(1)">&#8250;</button>
-          </div>
-          <div class="legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#1aba7c;"></div>Presencial</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#516ADC;"></div>Remoto</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#ddd;"></div>Sin definir</div>
-          </div>
-          <div class="form-label">Tocá cada día para alternar entre presencial y remoto</div>
-          <div class="days-grid">
-            <div class="day-toggle" onclick="toggleDia(this,'lun')"><div class="d-name">Lun</div><div class="d-sel">—</div></div>
-            <div class="day-toggle" onclick="toggleDia(this,'mar')"><div class="d-name">Mar</div><div class="d-sel">—</div></div>
-            <div class="day-toggle" onclick="toggleDia(this,'mie')"><div class="d-name">Mié</div><div class="d-sel">—</div></div>
-            <div class="day-toggle" onclick="toggleDia(this,'jue')"><div class="d-name">Jue</div><div class="d-sel">—</div></div>
-            <div class="day-toggle" onclick="toggleDia(this,'vie')"><div class="d-name">Vie</div><div class="d-sel">—</div></div>
-          </div>
-          <div class="days-counter" id="dias-contador">0 de 5 días definidos</div>
-          <button class="submit-btn" id="guardar-btn" onclick="guardarSemana()" disabled>Guardar semana</button>
+        <div id="success-banner" class="success-banner">
+          <span class="icon">&#10003;</span>
+          <span class="txt" id="banner-texto"></span>
         </div>
-        <div class="success-msg" id="success-msg" style="display:none;">
-          <div class="success-icon">✓</div>
-          <div class="success-title">¡Semana registrada!</div>
-          <div class="success-sub" id="success-texto"></div>
+        <div class="week-nav">
+          <button class="week-btn" onclick="navegarSemana(-1)">&#8249;</button>
+          <span class="week-label" id="semana-label"></span>
+          <button class="week-btn" onclick="navegarSemana(1)">&#8250;</button>
         </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#1aba7c;"></div>Presencial</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#516ADC;"></div>Remoto</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#ddd;"></div>Sin definir</div>
+        </div>
+        <div class="form-label">Tocá cada día para alternar entre presencial y remoto</div>
+        <div class="days-grid">
+          <div class="day-toggle" onclick="toggleDia(this,'lun')"><div class="d-name">Lun</div><div class="d-sel">&#8212;</div></div>
+          <div class="day-toggle" onclick="toggleDia(this,'mar')"><div class="d-name">Mar</div><div class="d-sel">&#8212;</div></div>
+          <div class="day-toggle" onclick="toggleDia(this,'mie')"><div class="d-name">Mié</div><div class="d-sel">&#8212;</div></div>
+          <div class="day-toggle" onclick="toggleDia(this,'jue')"><div class="d-name">Jue</div><div class="d-sel">&#8212;</div></div>
+          <div class="day-toggle" onclick="toggleDia(this,'vie')"><div class="d-name">Vie</div><div class="d-sel">&#8212;</div></div>
+        </div>
+        <div class="days-counter" id="dias-contador">0 de 5 días definidos</div>
+        <button class="submit-btn" id="guardar-btn" onclick="guardarSemana()" disabled>Guardar semana</button>
       </div>
       <div class="card">
         <div class="card-title">Mi historial</div>
@@ -209,12 +201,12 @@ function getSemana(off) {
   var vie = new Date(lun);
   vie.setDate(lun.getDate() + 4);
   var fmt = function(f) { return f.toLocaleDateString('es-AR', {day:'2-digit',month:'short'}); };
-  return fmt(lun) + '–' + fmt(vie) + ' ' + lun.getFullYear();
+  return fmt(lun) + '-' + fmt(vie) + ' ' + lun.getFullYear();
 }
 
 function api(params) {
   var url = SCRIPT + '?' + new URLSearchParams(params).toString();
-  return fetch(url).then(function(r){ return r.json(); });
+  return fetch(url).then(function(r) { return r.json(); });
 }
 
 function iniciarLogin() {
@@ -224,11 +216,10 @@ function iniciarLogin() {
   btn.textContent = 'Verificando...';
   btn.disabled = true;
   document.getElementById('login-error').style.display = 'none';
-
   api({action:'leerColaborador', dni:dni}).then(function(data) {
     if (data.ok && data.nombre) {
-      var partes = data.nombre.trim().split(' ');
-      var inic = (partes[0][0] + (partes[1] ? partes[1][0] : '')).toUpperCase();
+      var p = data.nombre.trim().split(' ');
+      var inic = (p[0][0] + (p[1] ? p[1][0] : '')).toUpperCase();
       usuario = {nombre:data.nombre, rol:data.rol||'colab', iniciales:inic, dni:dni, historial:data.registros||[]};
       mostrarApp();
     } else {
@@ -248,57 +239,44 @@ function mostrarApp() {
   document.getElementById('app-screen').style.display = 'block';
   document.getElementById('topbar-iniciales').textContent = usuario.iniciales;
   document.getElementById('topbar-semana').textContent = getSemana(semanaOffset);
-
   if (usuario.rol === 'admin') {
     document.getElementById('vista-admin').style.display = 'block';
     cargarAdmin();
   }
-
   document.getElementById('vista-colab').style.display = 'block';
   document.getElementById('colab-iniciales').textContent = usuario.iniciales;
   document.getElementById('colab-nombre').textContent = usuario.nombre;
   document.getElementById('colab-dni').textContent = 'DNI ' + usuario.dni;
-  actualizarSemanaColab();
+  actualizarSemana();
 }
 
-function actualizarSemanaColab() {
+function actualizarSemana() {
   var semana = getSemana(semanaOffset);
   document.getElementById('semana-label').textContent = semana;
   document.getElementById('topbar-semana').textContent = semana;
   resetDias();
-  var reg = usuario.historial.find(function(r){ return r.semana === semana; });
-  if (reg) precargarDias(reg);
-}
-
-function registrarOtraSemana() {
-  document.getElementById('success-banner').style.display = 'none';
-  semanaOffset += 1;
-  var semana = getSemana(semanaOffset);
-  document.getElementById('semana-label').textContent = semana;
-  document.getElementById('topbar-semana').textContent = semana;
-  resetDias();
-  var reg = usuario.historial.find(function(r){ return r.semana === semana; });
+  var reg = usuario.historial.find(function(r) { return r.semana === semana; });
   if (reg) precargarDias(reg);
 }
 
 function navegarSemana(delta) {
   semanaOffset += delta;
-  document.getElementById('success-msg').style.display = 'none';
-  document.getElementById('form-contenido').style.display = 'block';
-  actualizarSemanaColab();
+  document.getElementById('success-banner').style.display = 'none';
+  actualizarSemana();
 }
 
 function resetDias() {
   dias = {lun:null,mar:null,mie:null,jue:null,vie:null};
   document.querySelectorAll('.day-toggle').forEach(function(el) {
     el.className = 'day-toggle';
-    el.querySelector('.d-sel').textContent = '—';
+    el.querySelector('.d-sel').innerHTML = '&#8212;';
   });
   actualizarContador();
 }
 
 function precargarDias(reg) {
-  ['lun','mar','mie','jue','vie'].forEach(function(d, i) {
+  var keys = ['lun','mar','mie','jue','vie'];
+  keys.forEach(function(d, i) {
     var el = document.querySelectorAll('.day-toggle')[i];
     if (reg[d] === 'presencial') {
       dias[d] = 'presencial';
@@ -326,35 +304,38 @@ function toggleDia(el, dia) {
   } else {
     dias[dia] = null;
     el.className = 'day-toggle';
-    el.querySelector('.d-sel').textContent = '—';
+    el.querySelector('.d-sel').innerHTML = '&#8212;';
   }
   actualizarContador();
 }
 
 function actualizarContador() {
-  var n = Object.values(dias).filter(function(v){ return v; }).length;
+  var n = 0;
+  for (var k in dias) { if (dias[k]) n++; }
   document.getElementById('dias-contador').textContent = n + ' de 5 días definidos';
   document.getElementById('guardar-btn').disabled = n === 0;
 }
 
 function guardarSemana() {
   var btn = document.getElementById('guardar-btn');
+  var semana = getSemana(semanaOffset);
   btn.textContent = 'Guardando...';
   btn.disabled = true;
-  var semana = getSemana(semanaOffset);
-
   api({
     action:'guardar', dni:usuario.dni, nombre:usuario.nombre, semana:semana,
     lun:dias.lun||'', mar:dias.mar||'', mie:dias.mie||'', jue:dias.jue||'', vie:dias.vie||''
   }).then(function(data) {
     if (data.ok) {
-      document.getElementById('success-texto').textContent = 'Tu modalidad quedó guardada para ' + semana + '.';
-      document.getElementById('reg-form').style.display = 'none';
-      document.getElementById('success-msg').style.display = 'block';
+      var banner = document.getElementById('success-banner');
+      document.getElementById('banner-texto').textContent = semana + ' guardada correctamente';
+      banner.style.display = 'flex';
+      setTimeout(function() { banner.style.display = 'none'; }, 4000);
+      btn.textContent = 'Guardar semana';
+      actualizarContador();
       api({action:'leerColaborador', dni:usuario.dni}).then(function(h) {
         if (h.ok) {
           usuario.historial = h.registros || [];
-          mostrarHistorialColab(usuario.historial);
+          mostrarHistorial(usuario.historial);
         }
       });
     } else {
@@ -369,15 +350,16 @@ function guardarSemana() {
   });
 }
 
-function mostrarHistorialColab(registros) {
+function mostrarHistorial(registros) {
   var el = document.getElementById('historial-colab');
   if (!registros || registros.length === 0) {
     el.innerHTML = '<p style="color:#bbb;font-size:13px;">Sin registros anteriores</p>';
     return;
   }
+  var keys = ['lun','mar','mie','jue','vie'];
   el.innerHTML = registros.slice(0,5).map(function(r) {
-    var p = ['lun','mar','mie','jue','vie'].filter(function(d){ return r[d]==='presencial'; }).length;
-    var rem = ['lun','mar','mie','jue','vie'].filter(function(d){ return r[d]==='remoto'; }).length;
+    var p = keys.filter(function(d) { return r[d]==='presencial'; }).length;
+    var rem = keys.filter(function(d) { return r[d]==='remoto'; }).length;
     return '<div class="hist-row"><div class="hist-week">' + r.semana + '</div><div class="hist-badges"><span class="hist-badge p">' + p + 'P</span><span class="hist-badge r">' + rem + 'R</span></div></div>';
   }).join('');
 }
@@ -394,13 +376,11 @@ function cerrarSesion() {
   document.getElementById('login-btn').textContent = 'Ingresar';
   document.getElementById('login-btn').disabled = false;
   document.getElementById('login-error').style.display = 'none';
-  document.getElementById('success-msg').style.display = 'none';
-  document.getElementById('reg-form').style.display = 'block';
 }
 
 function setTab(nombre, btn) {
-  document.querySelectorAll('#vista-admin .section').forEach(function(s){ s.classList.remove('visible'); });
-  document.querySelectorAll('.nav-tab').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('#vista-admin .section').forEach(function(s) { s.classList.remove('visible'); });
+  document.querySelectorAll('.nav-tab').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('tab-' + nombre).classList.add('visible');
   btn.classList.add('active');
 }
@@ -410,68 +390,68 @@ function cargarAdmin() {
     if (data.ok && data.registros && data.registros.length > 0) {
       renderHoy(data.registros);
       renderSemana(data.registros);
-      renderHistorial(data.registros);
+      renderHistAdmin(data.registros);
       renderMetricas(data.registros);
     } else {
-      document.getElementById('tab-hoy').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros esta semana aún</p></div>';
+      document.getElementById('tab-hoy').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros esta semana</p></div>';
     }
   }).catch(function(){});
 }
 
-function nombreCorto(n) {
+function nc(n) {
   var p = n.trim().split(' ');
   return p[0] + (p[1] ? ' ' + p[1] : '');
 }
 
-function renderHoy(registros) {
+function renderHoy(rr) {
   var ds = ['lun','mar','mie','jue','vie'];
-  var idx = Math.min(Math.max(new Date().getDay()-1, 0), 4);
+  var idx = Math.min(Math.max(new Date().getDay()-1,0),4);
   var dk = ds[idx];
   var hoy = new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'short'});
-  var pres = registros.filter(function(r){ return r[dk]==='presencial'; });
-  var rem = registros.filter(function(r){ return r[dk]==='remoto'; });
+  var pr = rr.filter(function(r){return r[dk]==='presencial';});
+  var re = rr.filter(function(r){return r[dk]==='remoto';});
   document.getElementById('tab-hoy').innerHTML = '<div class="card">'
-    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'
-    + '<span style="font-size:15px;font-weight:700;color:#1a1a2e;">' + hoy + '</span>'
-    + '<span style="font-size:12px;color:#bbb;font-weight:600;">' + registros.length + ' registros</span></div>'
-    + '<div class="pill-group-label">Presencial (' + pres.length + ')</div>'
-    + '<div class="pill-row">' + pres.map(function(r){ return '<div class="pill presencial"><div class="pill-dot"></div>' + nombreCorto(r.nombre) + '</div>'; }).join('') + '</div>'
-    + '<div class="pill-group-label" style="margin-top:14px;">Remoto (' + rem.length + ')</div>'
-    + '<div class="pill-row">' + rem.map(function(r){ return '<div class="pill remoto"><div class="pill-dot"></div>' + nombreCorto(r.nombre) + '</div>'; }).join('') + '</div>'
-    + '</div>';
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'
+    +'<span style="font-size:15px;font-weight:700;color:#1a1a2e;">'+hoy+'</span>'
+    +'<span style="font-size:12px;color:#bbb;font-weight:600;">'+rr.length+' registros</span></div>'
+    +'<div class="pill-group-label">Presencial ('+pr.length+')</div>'
+    +'<div class="pill-row">'+pr.map(function(r){return '<div class="pill presencial"><div class="pill-dot"></div>'+nc(r.nombre)+'</div>';}).join('')+'</div>'
+    +'<div class="pill-group-label" style="margin-top:14px;">Remoto ('+re.length+')</div>'
+    +'<div class="pill-row">'+re.map(function(r){return '<div class="pill remoto"><div class="pill-dot"></div>'+nc(r.nombre)+'</div>';}).join('')+'</div>'
+    +'</div>';
 }
 
-function renderSemana(registros) {
+function renderSemana(rr) {
   var ds = ['lun','mar','mie','jue','vie'];
-  var filas = registros.map(function(r) {
-    return '<tr><td>' + nombreCorto(r.nombre) + '</td>'
-      + ds.map(function(d){ return '<td><div class="' + (r[d]==='presencial'?'cell-p':r[d]==='remoto'?'cell-r':'') + '">' + (r[d]==='presencial'?'P':r[d]==='remoto'?'R':'—') + '</div></td>'; }).join('')
-      + '</tr>';
+  var filas = rr.map(function(r) {
+    return '<tr><td>'+nc(r.nombre)+'</td>'
+      +ds.map(function(d){return '<td><div class="'+(r[d]==='presencial'?'cell-p':r[d]==='remoto'?'cell-r':'')+'">'+(r[d]==='presencial'?'P':r[d]==='remoto'?'R':'—')+'</div></td>';}).join('')
+      +'</tr>';
   }).join('');
   document.getElementById('tab-semana').innerHTML = '<div class="card"><div class="card-title">Grilla semanal</div>'
-    + '<table class="week-grid"><thead><tr><th style="text-align:left;">Colaborador</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead>'
-    + '<tbody>' + filas + '</tbody></table></div>';
+    +'<table class="week-grid"><thead><tr><th style="text-align:left;">Colaborador</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead>'
+    +'<tbody>'+filas+'</tbody></table></div>';
 }
 
-function renderHistorial(registros) {
+function renderHistAdmin(rr) {
   var ds = ['lun','mar','mie','jue','vie'];
-  var filas = registros.map(function(r) {
-    var p = ds.filter(function(d){ return r[d]==='presencial'; }).length;
-    var rem = ds.filter(function(d){ return r[d]==='remoto'; }).length;
-    return '<div class="hist-row"><div class="hist-week">' + nombreCorto(r.nombre) + ' — ' + r.semana + '</div>'
-      + '<div class="hist-badges"><span class="hist-badge p">' + p + 'P</span><span class="hist-badge r">' + rem + 'R</span></div></div>';
+  var filas = rr.map(function(r) {
+    var p = ds.filter(function(d){return r[d]==='presencial';}).length;
+    var re = ds.filter(function(d){return r[d]==='remoto';}).length;
+    return '<div class="hist-row"><div class="hist-week">'+nc(r.nombre)+' — '+r.semana+'</div>'
+      +'<div class="hist-badges"><span class="hist-badge p">'+p+'P</span><span class="hist-badge r">'+re+'R</span></div></div>';
   }).join('');
-  document.getElementById('tab-historial').innerHTML = '<div class="card"><div class="card-title">Historial</div>' + filas + '</div>';
+  document.getElementById('tab-historial').innerHTML = '<div class="card"><div class="card-title">Historial</div>'+filas+'</div>';
 }
 
-function renderMetricas(registros) {
+function renderMetricas(rr) {
   var ds = ['lun','mar','mie','jue','vie'];
-  var idx = Math.min(Math.max(new Date().getDay()-1, 0), 4);
+  var idx = Math.min(Math.max(new Date().getDay()-1,0),4);
   var dk = ds[idx];
-  document.getElementById('m-pres').textContent = registros.filter(function(r){ return r[dk]==='presencial'; }).length;
-  document.getElementById('m-rem').textContent = registros.filter(function(r){ return r[dk]==='remoto'; }).length;
-  document.getElementById('m-reg').textContent = registros.length;
-  document.getElementById('m-tot').textContent = registros.length;
+  document.getElementById('m-pres').textContent = rr.filter(function(r){return r[dk]==='presencial';}).length;
+  document.getElementById('m-rem').textContent = rr.filter(function(r){return r[dk]==='remoto';}).length;
+  document.getElementById('m-reg').textContent = rr.length;
+  document.getElementById('m-tot').textContent = rr.length;
 }
 
 document.getElementById('dni-input').addEventListener('keydown', function(e) {
