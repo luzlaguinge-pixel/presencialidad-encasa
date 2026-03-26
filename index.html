@@ -1,12 +1,7 @@
-const SHEET_NAME = 'Hoja 1';
+const SHEET_NAME = 'En Casa | Presencialidad';
 
 function doOptions(e) {
-  return ContentService
-    .createTextOutput('')
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeader('Access-Control-Allow-Origin', '*')
-    .setHeader('Access-Control-Allow-Methods', 'GET, POST')
-    .setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  return ContentService.createTextOutput('').setMimeType(ContentService.MimeType.TEXT);
 } // Cambiá si tu hoja tiene otro nombre
 
 function doGet(e) {
@@ -35,8 +30,7 @@ function handleRequest(e) {
 
   return ContentService
     .createTextOutput(JSON.stringify(result))
-    .setMimeType(ContentService.MimeType.JSON)
-    .setHeader('Access-Control-Allow-Origin', '*');
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function guardarRegistro(p) {
