@@ -1,548 +1,131 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Presencialidad — Yotzi</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Nunito', sans-serif; background: #f0f2f9; min-height: 100vh; }
+const SHEET_NAME = 'Hoja 1';
 
-/* LOGO SVG inline */
-.hu-logo { width: 32px; height: 32px; flex-shrink: 0; }
+function doOptions(e) {
+  return ContentService
+    .createTextOutput('')
+    .setMimeType(ContentService.MimeType.TEXT)
+    .setHeader('Access-Control-Allow-Origin', '*')
+    .setHeader('Access-Control-Allow-Methods', 'GET, POST')
+    .setHeader('Access-Control-Allow-Headers', 'Content-Type');
+} // Cambiá si tu hoja tiene otro nombre
 
-/* TOPBAR */
-.topbar { background: #1e2a78; padding: 13px 20px; display: flex; align-items: center; justify-content: space-between; }
-.topbar-left { display: flex; align-items: center; gap: 10px; }
-.topbar-texts .title { color: #fff; font-size: 15px; font-weight: 600; }
-.topbar-texts .sub { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 1px; }
-.topbar-right { display: flex; align-items: center; gap: 10px; }
-.topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 600; }
-.logout-btn { background: rgba(255,255,255,0.15); border: none; color: rgba(255,255,255,0.9); font-size: 12px; padding: 5px 11px; border-radius: 20px; cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 500; }
-.logout-btn:hover { background: rgba(255,255,255,0.25); }
-
-/* LOGIN */
-#login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: #f0f2f9; }
-.login-card { background: #fff; border-radius: 20px; padding: 36px 28px; width: 100%; max-width: 360px; box-shadow: 0 4px 24px rgba(30,42,120,0.1); }
-.login-logo-wrap { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; gap: 10px; }
-.login-logo-big { width: 60px; height: 60px; border-radius: 50%; background: #1e2a78; display: flex; align-items: center; justify-content: center; }
-.login-logo-big span { color: #f0ead8; font-size: 22px; font-weight: 700; font-family: 'Nunito', sans-serif; letter-spacing: -1px; }
-.login-brand { font-size: 22px; font-weight: 700; color: #1e2a78; font-family: 'Nunito', sans-serif; letter-spacing: -0.5px; }
-.login-title { text-align: center; font-size: 16px; font-weight: 600; color: #1a1a2e; margin-bottom: 4px; }
-.login-sub { text-align: center; font-size: 13px; color: #999; margin-bottom: 24px; }
-.input-label { font-size: 13px; color: #555; margin-bottom: 6px; display: block; font-weight: 500; }
-.input-field { width: 100%; padding: 12px 14px; border: 1.5px solid #dde2f5; border-radius: 12px; font-size: 15px; font-family: 'Nunito', sans-serif; outline: none; transition: border-color 0.2s; color: #1a1a2e; background: #fafbff; }
-.input-field:focus { border-color: #516ADC; background: #fff; }
-.login-btn { width: 100%; padding: 13px; background: #516ADC; color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; margin-top: 16px; transition: background 0.2s; }
-.login-btn:hover { background: #3f55c0; }
-.login-error { color: #e03131; font-size: 13px; text-align: center; margin-top: 10px; display: none; font-weight: 500; }
-.login-hint { font-size: 11px; color: #bbb; text-align: center; margin-top: 16px; line-height: 1.6; }
-
-/* APP */
-#app-screen { display: none; }
-.content { padding: 16px; max-width: 700px; margin: 0 auto; }
-
-/* TABS */
-.nav-tabs { display: flex; gap: 3px; margin-bottom: 16px; background: #fff; padding: 4px; border-radius: 14px; border: 1px solid #e8ecf8; }
-.nav-tab { flex: 1; padding: 8px 4px; text-align: center; font-size: 12px; border-radius: 10px; cursor: pointer; border: none; background: transparent; color: #999; font-family: 'Nunito', sans-serif; font-weight: 600; transition: all 0.15s; }
-.nav-tab.active { background: #516ADC; color: #fff; }
-
-/* CARDS */
-.card { background: #fff; border: 1px solid #e8ecf8; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
-.card-title { font-size: 12px; color: #aaa; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-
-.section { display: none; }
-.section.visible { display: block; }
-
-/* PILLS */
-.pill-group-label { font-size: 11px; color: #aaa; margin-bottom: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.pill-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 8px; }
-.pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; }
-.pill.presencial { background: #e8fdf2; color: #0a7a4e; }
-.pill.remoto { background: #eef0fd; color: #3249b8; }
-.pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-.pill.presencial .pill-dot { background: #1aba7c; }
-.pill.remoto .pill-dot { background: #516ADC; }
-
-/* WEEK GRID */
-.week-grid { width: 100%; border-collapse: collapse; }
-.week-grid th { font-size: 11px; color: #aaa; font-weight: 700; text-align: center; padding: 6px 4px; text-transform: uppercase; letter-spacing: 0.3px; }
-.week-grid td { text-align: center; padding: 5px 3px; font-size: 12px; }
-.week-grid td:first-child { text-align: left; font-size: 13px; color: #333; padding-left: 0; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
-.week-grid tr:not(:last-child) td { border-bottom: 1px solid #f0f2fa; }
-.cell-p { background: #e8fdf2; color: #0a7a4e; border-radius: 6px; padding: 3px 2px; font-weight: 700; font-size: 11px; }
-.cell-r { background: #eef0fd; color: #3249b8; border-radius: 6px; padding: 3px 2px; font-weight: 700; font-size: 11px; }
-
-/* METRICS */
-.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.metric-card { background: #f4f6ff; border-radius: 12px; padding: 14px; }
-.metric-label { font-size: 12px; color: #888; margin-bottom: 4px; font-weight: 600; }
-.metric-value { font-size: 26px; font-weight: 700; color: #1e2a78; }
-.metric-sub { font-size: 11px; color: #bbb; margin-top: 2px; font-weight: 500; }
-
-/* BARS */
-.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.bar-name { font-size: 12px; color: #666; width: 80px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
-.bar-wrap { flex: 1; height: 12px; background: #f0f2fa; border-radius: 6px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 6px; }
-.bar-pct { font-size: 11px; color: #888; width: 32px; text-align: right; flex-shrink: 0; font-weight: 600; }
-
-/* HISTORIAL */
-.hist-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f2fa; }
-.hist-row:last-child { border: none; }
-.hist-week { font-size: 13px; color: #333; font-weight: 600; }
-.hist-badges { display: flex; gap: 6px; }
-.hist-badge { font-size: 11px; padding: 3px 10px; border-radius: 12px; font-weight: 700; }
-.hist-badge.p { background: #e8fdf2; color: #0a7a4e; }
-.hist-badge.r { background: #eef0fd; color: #3249b8; }
-
-/* FORM */
-.form-label { font-size: 13px; color: #666; font-weight: 600; margin-bottom: 10px; display: block; }
-.days-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.day-toggle { border-radius: 12px; padding: 10px 4px; text-align: center; border: 1.5px solid #e8ecf8; background: #fafbff; cursor: pointer; transition: all 0.15s; }
-.day-toggle .d-name { font-size: 11px; color: #aaa; margin-bottom: 5px; font-weight: 700; text-transform: uppercase; }
-.day-toggle .d-sel { font-size: 11px; font-weight: 700; color: #ddd; }
-.day-toggle.presencial { border-color: #1aba7c; background: #e8fdf2; }
-.day-toggle.presencial .d-name { color: #0a7a4e; }
-.day-toggle.presencial .d-sel { color: #0a7a4e; }
-.day-toggle.remoto { border-color: #516ADC; background: #eef0fd; }
-.day-toggle.remoto .d-name { color: #3249b8; }
-.day-toggle.remoto .d-sel { color: #3249b8; }
-.legend { display: flex; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
-.legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #777; font-weight: 600; }
-.legend-dot { width: 9px; height: 9px; border-radius: 50%; }
-.submit-btn { width: 100%; padding: 14px; background: #516ADC; color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: 'Nunito', sans-serif; cursor: pointer; margin-top: 16px; transition: background 0.2s; }
-.submit-btn:hover { background: #3f55c0; }
-.submit-btn:disabled { background: #c4ccf0; cursor: not-allowed; }
-.days-counter { margin-top: 8px; font-size: 12px; color: #bbb; text-align: center; font-weight: 500; }
-
-/* SUCCESS */
-.success-msg { text-align: center; padding: 24px 16px; display: none; }
-.success-icon { width: 56px; height: 56px; background: #e8fdf2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 26px; }
-.success-title { font-size: 17px; font-weight: 700; color: #0a7a4e; margin-bottom: 6px; }
-.success-sub { font-size: 13px; color: #aaa; font-weight: 500; }
-
-/* SELF */
-.self-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-.self-avatar { width: 46px; height: 46px; border-radius: 50%; background: #eef0fd; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #516ADC; flex-shrink: 0; }
-.self-name { font-size: 16px; font-weight: 700; color: #1a1a2e; }
-.self-dni { font-size: 12px; color: #bbb; font-weight: 500; }
-.week-nav-label { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 14px; }
-</style>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo-wrap">
-      <img src="Copy of hu-blue (2).png" alt="humand" style="width:64px;height:64px;object-fit:contain;" />
-      <img src="Copy of Logo horizontal - blue.png" alt="humand" style="height:28px;width:auto;" />
-    </div>
-    <div class="login-title">Presencialidad</div>
-    <div class="login-sub">Ingresá tu DNI para continuar</div>
-    <label class="input-label">DNI</label>
-    <input type="number" class="input-field" id="dni-input" placeholder="Ej: 30123456" />
-    <button class="login-btn" onclick="doLogin()">Ingresar</button>
-    <div class="login-error" id="login-error">DNI no encontrado. Verificá e intentá de nuevo.</div>
-    <div class="login-hint">DNI de prueba<br>12345678 → Admin RR.HH. · 11111111 → Colaborador</div>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app-screen">
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="hu-logo">
-        <img src="Copy of hu-blue (2).png" alt="humand" style="width:32px;height:32px;object-fit:contain;" />
-      </div>
-      <div class="topbar-texts">
-        <div class="title">Presencialidad</div>
-        <div class="sub">Semana 25–29 mar 2026</div>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <div class="topbar-avatar" id="topbar-initials">AM</div>
-      <button class="logout-btn" onclick="doLogout()">Salir</button>
-    </div>
-  </div>
-
-  <div class="content">
-    <!-- ADMIN -->
-    <div id="admin-view" style="display:none;">
-      <div class="nav-tabs">
-        <button class="nav-tab active" onclick="setTab('hoy',this)">Hoy</button>
-        <button class="nav-tab" onclick="setTab('semana',this)">Semana</button>
-        <button class="nav-tab" onclick="setTab('historial',this)">Historial</button>
-        <button class="nav-tab" onclick="setTab('metricas',this)">Métricas</button>
-      </div>
-
-      <div class="section visible" id="tab-hoy">
-        <div class="card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <span style="font-size:15px;font-weight:700;color:#1a1a2e;">Jueves 26 mar</span>
-            <span style="font-size:12px;color:#bbb;font-weight:600;">14 registros</span>
-          </div>
-          <div class="pill-group-label">Presencial (8)</div>
-          <div class="pill-row">
-            <div class="pill presencial"><div class="pill-dot"></div>Ana M.</div>
-            <div class="pill presencial"><div class="pill-dot"></div>Carlos R.</div>
-            <div class="pill presencial"><div class="pill-dot"></div>Sofía T.</div>
-            <div class="pill presencial"><div class="pill-dot"></div>Diego L.</div>
-            <div class="pill presencial"><div class="pill-dot"></div>Valeria P.</div>
-            <div class="pill presencial"><div class="pill-dot"></div>Martín G.</div>
-            <div class="pill presencial"><div class="pill-dot"></div>Laura V.</div>
-            <div class="pill presencial"><div class="pill-dot"></div>Nicolás F.</div>
-          </div>
-          <div class="pill-group-label" style="margin-top:14px;">Remoto (6)</div>
-          <div class="pill-row">
-            <div class="pill remoto"><div class="pill-dot"></div>Beatriz O.</div>
-            <div class="pill remoto"><div class="pill-dot"></div>Hernán S.</div>
-            <div class="pill remoto"><div class="pill-dot"></div>Camila N.</div>
-            <div class="pill remoto"><div class="pill-dot"></div>Pablo E.</div>
-            <div class="pill remoto"><div class="pill-dot"></div>Julia K.</div>
-            <div class="pill remoto"><div class="pill-dot"></div>Roberto M.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section" id="tab-semana">
-        <div class="card">
-          <div class="card-title">Grilla semanal — 25 al 29 mar</div>
-          <table class="week-grid">
-            <thead><tr><th style="text-align:left;">Colaborador</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead>
-            <tbody>
-              <tr><td>Ana M.</td><td><div class="cell-p">P</div></td><td><div class="cell-r">R</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td><td><div class="cell-r">R</div></td></tr>
-              <tr><td>Carlos R.</td><td><div class="cell-r">R</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td></tr>
-              <tr><td>Sofía T.</td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td><td><div class="cell-r">R</div></td><td><div class="cell-p">P</div></td><td><div class="cell-r">R</div></td></tr>
-              <tr><td>Diego L.</td><td><div class="cell-r">R</div></td><td><div class="cell-r">R</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td></tr>
-              <tr><td>Valeria P.</td><td><div class="cell-p">P</div></td><td><div class="cell-r">R</div></td><td><div class="cell-r">R</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td></tr>
-              <tr><td>Beatriz O.</td><td><div class="cell-r">R</div></td><td><div class="cell-r">R</div></td><td><div class="cell-r">R</div></td><td><div class="cell-r">R</div></td><td><div class="cell-p">P</div></td></tr>
-              <tr><td>Martín G.</td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td><td><div class="cell-p">P</div></td><td><div class="cell-r">R</div></td></tr>
-              <tr><td>Camila N.</td><td><div class="cell-r">R</div></td><td><div class="cell-p">P</div></td><td><div class="cell-r">R</div></td><td><div class="cell-r">R</div></td><td><div class="cell-r">R</div></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="section" id="tab-historial">
-        <div class="card">
-          <div class="card-title">Historial global</div>
-          <div class="hist-row"><div class="hist-week">Semana 25–29 mar</div><div class="hist-badges"><span class="hist-badge p">8P prom.</span><span class="hist-badge r">6R prom.</span></div></div>
-          <div class="hist-row"><div class="hist-week">Semana 18–22 mar</div><div class="hist-badges"><span class="hist-badge p">7P prom.</span><span class="hist-badge r">7R prom.</span></div></div>
-          <div class="hist-row"><div class="hist-week">Semana 11–15 mar</div><div class="hist-badges"><span class="hist-badge p">9P prom.</span><span class="hist-badge r">5R prom.</span></div></div>
-          <div class="hist-row"><div class="hist-week">Semana 4–8 mar</div><div class="hist-badges"><span class="hist-badge p">8P prom.</span><span class="hist-badge r">6R prom.</span></div></div>
-        </div>
-      </div>
-
-      <div class="section" id="tab-metricas">
-        <div class="metrics-grid">
-          <div class="metric-card"><div class="metric-label">Presencial hoy</div><div class="metric-value">57%</div><div class="metric-sub">8 de 14 colaboradores</div></div>
-          <div class="metric-card"><div class="metric-label">Remoto hoy</div><div class="metric-value">43%</div><div class="metric-sub">6 de 14 colaboradores</div></div>
-          <div class="metric-card"><div class="metric-label">Prom. presencial</div><div class="metric-value">52%</div><div class="metric-sub">Últimas 4 semanas</div></div>
-          <div class="metric-card"><div class="metric-label">Completitud</div><div class="metric-value">100%</div><div class="metric-sub">14/14 registros</div></div>
-        </div>
-        <div class="card">
-          <div class="card-title">% presencialidad por colaborador</div>
-          <div class="bar-row"><div class="bar-name">Martín G.</div><div class="bar-wrap"><div class="bar-fill" style="width:80%;background:#1aba7c;"></div></div><div class="bar-pct">80%</div></div>
-          <div class="bar-row"><div class="bar-name">Carlos R.</div><div class="bar-wrap"><div class="bar-fill" style="width:70%;background:#1aba7c;"></div></div><div class="bar-pct">70%</div></div>
-          <div class="bar-row"><div class="bar-name">Ana M.</div><div class="bar-wrap"><div class="bar-fill" style="width:60%;background:#1aba7c;"></div></div><div class="bar-pct">60%</div></div>
-          <div class="bar-row"><div class="bar-name">Sofía T.</div><div class="bar-wrap"><div class="bar-fill" style="width:60%;background:#1aba7c;"></div></div><div class="bar-pct">60%</div></div>
-          <div class="bar-row"><div class="bar-name">Camila N.</div><div class="bar-wrap"><div class="bar-fill" style="width:25%;background:#516ADC;"></div></div><div class="bar-pct">25%</div></div>
-          <div class="bar-row"><div class="bar-name">Beatriz O.</div><div class="bar-wrap"><div class="bar-fill" style="width:20%;background:#516ADC;"></div></div><div class="bar-pct">20%</div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- COLABORADOR -->
-    <div id="colab-view" style="display:none;">
-      <div class="card">
-        <div class="self-header">
-          <div class="self-avatar" id="colab-initials">AM</div>
-          <div>
-            <div class="self-name" id="colab-name">Ana Martínez</div>
-            <div class="self-dni" id="colab-dni">DNI 11111111</div>
-          </div>
-        </div>
-        <div id="reg-form">
-          <div class="week-nav-label" id="week-label">Cargando semana...</div>
-          <div class="legend">
-            <div class="legend-item"><div class="legend-dot" style="background:#1aba7c;"></div>Presencial</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#516ADC;"></div>Remoto</div>
-            <div class="legend-item"><div class="legend-dot" style="background:#ddd;"></div>Sin definir</div>
-          </div>
-          <div class="form-label">Tocá cada día para alternar entre presencial y remoto</div>
-          <div class="days-grid" id="days-grid">
-            <div class="day-toggle" onclick="toggleDay(this,'lun')"><div class="d-name">Lun</div><div class="d-sel">—</div></div>
-            <div class="day-toggle" onclick="toggleDay(this,'mar')"><div class="d-name">Mar</div><div class="d-sel">—</div></div>
-            <div class="day-toggle" onclick="toggleDay(this,'mie')"><div class="d-name">Mié</div><div class="d-sel">—</div></div>
-            <div class="day-toggle" onclick="toggleDay(this,'jue')"><div class="d-name">Jue</div><div class="d-sel">—</div></div>
-            <div class="day-toggle" onclick="toggleDay(this,'vie')"><div class="d-name">Vie</div><div class="d-sel">—</div></div>
-          </div>
-          <div class="days-counter" id="days-counter">0 de 5 días definidos</div>
-          <button class="submit-btn" id="submit-btn" onclick="submitRegistro()" disabled>Guardar semana</button>
-        </div>
-        <div class="success-msg" id="success-msg">
-          <div class="success-icon">✓</div>
-          <div class="success-title">¡Semana registrada!</div>
-          <div class="success-sub">Tu modalidad quedó guardada para la semana del 25 al 29 de marzo.</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Mi historial</div>
-        <div id="hist-colab"><div style="color:#bbb;font-size:13px;">Cargando...</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7pQaMZ-aYdMrZZgguhYsLIHfObp7-sBM7UNIeo-P-Yfth_9ZVmkpbA4UmLg89HQo/exec';
-
-const USERS = {
-  '12345678': { name: 'Admin RR.HH.', role: 'admin', initials: 'RH' },
-};
-let dayStates = { lun: null, mar: null, mie: null, jue: null, vie: null };
-let currentUser = null;
-
-async function apiCall(params) {
-  const url = SCRIPT_URL + '?' + new URLSearchParams(params).toString();
-  const res = await fetch(url);
-  return res.json();
+function doGet(e) {
+  return handleRequest(e);
 }
 
-function getSemanaActual() {
-  const hoy = new Date();
-  const dia = hoy.getDay();
-  const lunes = new Date(hoy);
-  lunes.setDate(hoy.getDate() - (dia === 0 ? 6 : dia - 1));
-  const viernes = new Date(lunes);
-  viernes.setDate(lunes.getDate() + 4);
-  const fmt = d => d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
-  return `${fmt(lunes)}–${fmt(viernes)} ${lunes.getFullYear()}`;
+function doPost(e) {
+  return handleRequest(e);
 }
 
-async function doLogin() {
-  const dni = document.getElementById('dni-input').value.trim();
-  if (!dni) return;
+function handleRequest(e) {
+  const params = e.parameter || {};
+  const action = params.action;
 
-  const btn = document.querySelector('.login-btn');
-  btn.textContent = 'Verificando...';
-  btn.disabled = true;
+  let result;
 
-  // Admin hardcodeado
-  if (USERS[dni]) {
-    currentUser = { ...USERS[dni], dni };
-    mostrarApp();
-    return;
-  }
-
-  // Buscar colaborador en el Sheet
-  try {
-    const data = await apiCall({ action: 'leerColaborador', dni });
-    if (data.ok && data.registros !== undefined) {
-      // Existe en el sheet, construir usuario
-      const initials = data.nombre ? data.nombre.split(' ').map(p => p[0]).join('').substring(0, 2).toUpperCase() : dni.substring(0, 2);
-      currentUser = { name: data.nombre || 'Colaborador', role: 'colab', initials, dni };
-      mostrarApp(data.registros);
-    } else {
-      mostrarError();
-    }
-  } catch(e) {
-    // Si no hay conexión, permitir entrada de prueba
-    mostrarError();
-  }
-
-  btn.textContent = 'Ingresar';
-  btn.disabled = false;
-}
-
-function mostrarError() {
-  document.getElementById('login-error').style.display = 'block';
-  document.querySelector('.login-btn').textContent = 'Ingresar';
-  document.querySelector('.login-btn').disabled = false;
-}
-
-async function mostrarApp(historialPrevio) {
-  document.getElementById('login-error').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app-screen').style.display = 'block';
-  document.getElementById('topbar-initials').textContent = currentUser.initials;
-  document.getElementById('topbar-week').textContent = getSemanaActual();
-
-  if (currentUser.role === 'admin') {
-    document.getElementById('admin-view').style.display = 'block';
-    cargarDatosAdmin();
+  if (action === 'guardar') {
+    result = guardarRegistro(params);
+  } else if (action === 'leer') {
+    result = leerRegistros(params);
+  } else if (action === 'leerColaborador') {
+    result = leerColaborador(params);
   } else {
-    document.getElementById('colab-view').style.display = 'block';
-    document.getElementById('colab-initials').textContent = currentUser.initials;
-    document.getElementById('colab-name').textContent = currentUser.name;
-    document.getElementById('colab-dni').textContent = 'DNI ' + currentUser.dni;
-    document.getElementById('week-label').textContent = getSemanaActual();
-    if (historialPrevio) cargarHistorialColab(historialPrevio);
+    result = { error: 'Acción no reconocida' };
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON)
+    .setHeader('Access-Control-Allow-Origin', '*');
+}
+
+function guardarRegistro(p) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAME);
+
+    // Verificar si ya existe un registro para este DNI y semana
+    const data = sheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][1]) === String(p.dni) && data[i][3] === p.semana) {
+        // Actualizar fila existente
+        sheet.getRange(i + 1, 1, 1, 9).setValues([[
+          new Date().toISOString(),
+          p.dni, p.nombre, p.semana,
+          p.lun, p.mar, p.mie, p.jue, p.vie
+        ]]);
+        return { ok: true, accion: 'actualizado' };
+      }
+    }
+
+    // Agregar nueva fila
+    sheet.appendRow([
+      new Date().toISOString(),
+      p.dni, p.nombre, p.semana,
+      p.lun, p.mar, p.mie, p.jue, p.vie
+    ]);
+    return { ok: true, accion: 'creado' };
+
+  } catch (err) {
+    return { error: err.message };
   }
 }
 
-async function cargarDatosAdmin() {
+function leerRegistros(p) {
   try {
-    const semana = getSemanaActual();
-    const data = await apiCall({ action: 'leer', semana });
-    if (data.ok && data.registros.length > 0) {
-      renderAdminHoy(data.registros);
-      renderAdminSemana(data.registros);
-      renderAdminHistorial(data.registros);
-      renderAdminMetricas(data.registros);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+
+    const semana = p.semana;
+    const registros = [];
+
+    for (let i = 1; i < data.length; i++) {
+      if (!semana || data[i][3] === semana) {
+        registros.push({
+          timestamp: data[i][0],
+          dni:       String(data[i][1]),
+          nombre:    data[i][2],
+          semana:    data[i][3],
+          lun:       data[i][4],
+          mar:       data[i][5],
+          mie:       data[i][6],
+          jue:       data[i][7],
+          vie:       data[i][8]
+        });
+      }
     }
-  } catch(e) { /* mantener datos de ejemplo */ }
-}
+    return { ok: true, registros };
 
-function renderAdminHoy(registros) {
-  const hoy = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'short' });
-  const dias = ['lun','mar','mie','jue','vie'];
-  const diaIdx = Math.min(Math.max(new Date().getDay() - 1, 0), 4);
-  const diaKey = dias[diaIdx];
-
-  const presenciales = registros.filter(r => r[diaKey] === 'presencial');
-  const remotos = registros.filter(r => r[diaKey] === 'remoto');
-
-  const hoyDiv = document.getElementById('tab-hoy');
-  hoyDiv.innerHTML = `
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-        <span style="font-size:15px;font-weight:700;color:#1a1a2e;">${hoy}</span>
-        <span style="font-size:12px;color:#bbb;font-weight:600;">${registros.length} registros</span>
-      </div>
-      <div class="pill-group-label">Presencial (${presenciales.length})</div>
-      <div class="pill-row">${presenciales.map(r => `<div class="pill presencial"><div class="pill-dot"></div>${r.nombre}</div>`).join('')}</div>
-      <div class="pill-group-label" style="margin-top:14px;">Remoto (${remotos.length})</div>
-      <div class="pill-row">${remotos.map(r => `<div class="pill remoto"><div class="pill-dot"></div>${r.nombre}</div>`).join('')}</div>
-    </div>`;
-}
-
-function renderAdminSemana(registros) {
-  const dias = ['lun','mar','mie','jue','vie'];
-  const rows = registros.map(r => `
-    <tr>
-      <td>${r.nombre}</td>
-      ${dias.map(d => `<td><div class="cell-${r[d]==='presencial'?'p':r[d]==='remoto'?'r':'x'}">${r[d]==='presencial'?'P':r[d]==='remoto'?'R':'—'}</div></td>`).join('')}
-    </tr>`).join('');
-  document.getElementById('tab-semana').innerHTML = `
-    <div class="card">
-      <div class="card-title">Grilla semanal — ${getSemanaActual()}</div>
-      <table class="week-grid">
-        <thead><tr><th style="text-align:left;">Colaborador</th><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th></tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div>`;
-}
-
-function renderAdminHistorial(registros) {
-  const dias = ['lun','mar','mie','jue','vie'];
-  const rows = registros.map(r => {
-    const p = dias.filter(d => r[d]==='presencial').length;
-    const rem = dias.filter(d => r[d]==='remoto').length;
-    return `<div class="hist-row"><div class="hist-week">${r.nombre} — ${r.semana}</div><div class="hist-badges"><span class="hist-badge p">${p}P</span><span class="hist-badge r">${rem}R</span></div></div>`;
-  }).join('');
-  document.getElementById('tab-historial').innerHTML = `<div class="card"><div class="card-title">Historial</div>${rows}</div>`;
-}
-
-function renderAdminMetricas(registros) {
-  const dias = ['lun','mar','mie','jue','vie'];
-  const totalCeldas = registros.length * 5;
-  const totalP = registros.reduce((acc, r) => acc + dias.filter(d => r[d]==='presencial').length, 0);
-  const pct = Math.round(totalP / totalCeldas * 100);
-  document.querySelector('#tab-metricas .metrics-grid').innerHTML = `
-    <div class="metric-card"><div class="metric-label">Presencial semana</div><div class="metric-value">${pct}%</div><div class="metric-sub">${totalP} días/persona</div></div>
-    <div class="metric-card"><div class="metric-label">Remoto semana</div><div class="metric-value">${100-pct}%</div><div class="metric-sub">${totalCeldas-totalP} días/persona</div></div>
-    <div class="metric-card"><div class="metric-label">Registros</div><div class="metric-value">${registros.length}</div><div class="metric-sub">Esta semana</div></div>
-    <div class="metric-card"><div class="metric-label">Completitud</div><div class="metric-value">${registros.length > 0 ? '✓' : '—'}</div><div class="metric-sub">Colaboradores</div></div>`;
-}
-
-function cargarHistorialColab(registros) {
-  const dias = ['lun','mar','mie','jue','vie'];
-  const rows = registros.slice(0, 5).map(r => {
-    const p = dias.filter(d => r[d]==='presencial').length;
-    const rem = dias.filter(d => r[d]==='remoto').length;
-    return `<div class="hist-row"><div class="hist-week">${r.semana}</div><div class="hist-badges"><span class="hist-badge p">${p}P</span><span class="hist-badge r">${rem}R</span></div></div>`;
-  }).join('');
-  document.getElementById('hist-colab').innerHTML = rows || '<div style="color:#bbb;font-size:13px;">Sin registros anteriores</div>';
-}
-
-function doLogout() {
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app-screen').style.display = 'none';
-  document.getElementById('admin-view').style.display = 'none';
-  document.getElementById('colab-view').style.display = 'none';
-  document.getElementById('dni-input').value = '';
-  document.getElementById('success-msg').style.display = 'none';
-  document.getElementById('reg-form').style.display = 'block';
-  dayStates = { lun: null, mar: null, mie: null, jue: null, vie: null };
-  document.querySelectorAll('.day-toggle').forEach(d => {
-    d.className = 'day-toggle';
-    d.querySelector('.d-sel').textContent = '—';
-  });
-  updateCounter();
-}
-
-function setTab(name, btn) {
-  document.querySelectorAll('#admin-view .section').forEach(s => s.classList.remove('visible'));
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('visible');
-  btn.classList.add('active');
-}
-
-function toggleDay(el, day) {
-  const cur = dayStates[day];
-  if (cur === null) { dayStates[day] = 'presencial'; el.className = 'day-toggle presencial'; el.querySelector('.d-sel').textContent = 'Pres.'; }
-  else if (cur === 'presencial') { dayStates[day] = 'remoto'; el.className = 'day-toggle remoto'; el.querySelector('.d-sel').textContent = 'Rem.'; }
-  else { dayStates[day] = null; el.className = 'day-toggle'; el.querySelector('.d-sel').textContent = '—'; }
-  updateCounter();
-}
-
-function updateCounter() {
-  const defined = Object.values(dayStates).filter(v => v !== null).length;
-  document.getElementById('days-counter').textContent = defined + ' de 5 días definidos';
-  document.getElementById('submit-btn').disabled = defined === 0;
-}
-
-async function submitRegistro() {
-  const dias = ['lun','mar','mie','jue','vie'];
-  const btn = document.getElementById('submit-btn');
-  btn.textContent = 'Guardando...';
-  btn.disabled = true;
-
-  try {
-    const params = {
-      action: 'guardar',
-      dni: currentUser.dni,
-      nombre: currentUser.name,
-      semana: getSemanaActual(),
-      lun: dayStates.lun || '',
-      mar: dayStates.mar || '',
-      mie: dayStates.mie || '',
-      jue: dayStates.jue || '',
-      vie: dayStates.vie || ''
-    };
-    const data = await apiCall(params);
-    if (data.ok) {
-      document.getElementById('reg-form').style.display = 'none';
-      document.getElementById('success-msg').style.display = 'block';
-      // Recargar historial
-      const hist = await apiCall({ action: 'leerColaborador', dni: currentUser.dni });
-      if (hist.ok) cargarHistorialColab(hist.registros);
-    } else {
-      btn.textContent = 'Guardar semana';
-      btn.disabled = false;
-      alert('Error al guardar. Intentá de nuevo.');
-    }
-  } catch(e) {
-    btn.textContent = 'Guardar semana';
-    btn.disabled = false;
-    alert('Error de conexión. Verificá tu internet.');
+  } catch (err) {
+    return { error: err.message };
   }
 }
 
-document.getElementById('dni-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });</script>
-</body>
-</html>
+function leerColaborador(p) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheet = ss.getSheetByName(SHEET_NAME);
+    const data = sheet.getDataRange().getValues();
+
+    const registros = [];
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][1]) === String(p.dni)) {
+        registros.push({
+          semana: data[i][3],
+          lun:    data[i][4],
+          mar:    data[i][5],
+          mie:    data[i][6],
+          jue:    data[i][7],
+          vie:    data[i][8]
+        });
+      }
+    }
+    // Ordenar por semana descendente (más reciente primero)
+    registros.sort((a, b) => b.semana.localeCompare(a.semana));
+    return { ok: true, registros };
+
+  } catch (err) {
+    return { error: err.message };
+  }
+}
