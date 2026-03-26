@@ -379,7 +379,8 @@ async function mostrarApp(historialPrevio) {
     document.getElementById('colab-initials').textContent = currentUser.initials;
     document.getElementById('colab-name').textContent = currentUser.name;
     document.getElementById('colab-dni').textContent = 'DNI ' + currentUser.dni;
-    document.getElementById('week-label').textContent = getSemanaActual();
+    const weekLabel = document.getElementById('week-label');
+    if (weekLabel) weekLabel.textContent = getSemanaActual();
     // Recargar historial fresco desde el Sheet
     try {
       const hist = await apiCall({ action: 'leerColaborador', dni: currentUser.dni });
