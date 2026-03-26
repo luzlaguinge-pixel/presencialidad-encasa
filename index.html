@@ -182,7 +182,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
           <div class="success-icon">✓</div>
           <div class="success-title">¡Semana registrada!</div>
           <div class="success-sub" id="success-texto"></div>
-          <button onclick="registrarOtraSemana()" style="margin-top:16px;padding:10px 20px;background:#f0f2f9;border:none;border-radius:10px;font-size:13px;font-weight:600;color:#516ADC;cursor:pointer;font-family:'Nunito',sans-serif;">Registrar otra semana</button>
+          <button onclick="registrarOtraSemana()" style="margin-top:16px;width:100%;padding:12px;background:#516ADC;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Registrar otra semana</button>
         </div>
       </div>
       <div class="card">
@@ -272,7 +272,13 @@ function actualizarSemanaColab() {
 function registrarOtraSemana() {
   document.getElementById('success-msg').style.display = 'none';
   document.getElementById('form-contenido').style.display = 'block';
-  navegarSemana(1);
+  semanaOffset += 1;
+  var semana = getSemana(semanaOffset);
+  document.getElementById('semana-label').textContent = semana;
+  document.getElementById('topbar-semana').textContent = semana;
+  resetDias();
+  var reg = usuario.historial.find(function(r){ return r.semana === semana; });
+  if (reg) precargarDias(reg);
 }
 
 function navegarSemana(delta) {
