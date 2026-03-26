@@ -372,10 +372,14 @@ async function mostrarApp(historialPrevio) {
   document.getElementById('topbar-week').textContent = getSemanaActual();
 
   if (currentUser.role === 'admin') {
-    document.getElementById('admin-view').style.display = 'block';
+    const av = document.getElementById('admin-view');
+    av.style.display = 'block';
+    av.style.visibility = 'visible';
     cargarDatosAdmin();
   } else {
-    document.getElementById('colab-view').style.display = 'block';
+    const cv = document.getElementById('colab-view');
+    cv.style.display = 'block';
+    cv.style.visibility = 'visible';
     document.getElementById('colab-initials').textContent = currentUser.initials;
     document.getElementById('colab-name').textContent = currentUser.name;
     document.getElementById('colab-dni').textContent = 'DNI ' + currentUser.dni;
