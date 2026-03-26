@@ -4,11 +4,10 @@ function getSheet() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
-    // Fallback: usar la primera hoja si no encuentra por nombre
     return ss.getSheets()[0];
   }
   return sheet;
-} // Cambiá si tu hoja tiene otro nombre
+}
 
 function doGet(e) {
   return handleRequest(e);
@@ -42,12 +41,10 @@ function handleRequest(e) {
 function guardarRegistro(p) {
   try {
     const sheet = getSheet();
-
-    // Verificar si ya existe un registro para este DNI y semana
     const data = sheet.getDataRange().getValues();
+
     for (let i = 1; i < data.length; i++) {
-      if (String(data[i][1]) === String(p.dni) && data[i][3] === p.semana) {
-        // Actualizar fila existente
+      if (String(data[i][1]).trim() === String(p.dni).trim() && data[i][3] === p.semana) {
         sheet.getRange(i + 1, 1, 1, 9).setValues([[
           new Date().toISOString(),
           p.dni, p.nombre, p.semana,
@@ -57,7 +54,6 @@ function guardarRegistro(p) {
       }
     }
 
-    // Agregar nueva fila
     sheet.appendRow([
       new Date().toISOString(),
       p.dni, p.nombre, p.semana,
@@ -105,22 +101,26 @@ function leerColaborador(p) {
     const sheet = getSheet();
     const data = sheet.getDataRange().getValues();
 
+    let nombre = '';
     const registros = [];
     for (let i = 1; i < data.length; i++) {
-      if (String(data[i][1]) === String(p.dni)) {
-        registros.push({
-          semana: data[i][3],
-          lun:    data[i][4],
-          mar:    data[i][5],
-          mie:    data[i][6],
-          jue:    data[i][7],
-          vie:    data[i][8]
-        });
+      if (String(data[i][1]).trim() === String(p.dni).trim()) {
+        if (!nombre) nombre = data[i][2];
+        if (data[i][3]) {
+          registros.push({
+            semana: data[i][3],
+            lun:    data[i][4],
+            mar:    data[i][5],
+            mie:    data[i][6],
+            jue:    data[i][7],
+            vie:    data[i][8]
+          });
+        }
       }
     }
-    // Ordenar por semana descendente (más reciente primero)
+    if (!nombre) return { ok: false, error: 'DNI no encontrado' };
     registros.sort((a, b) => b.semana.localeCompare(a.semana));
-    return { ok: true, registros };
+    return { ok: true, nombre, registros };
 
   } catch (err) {
     return { error: err.message };
