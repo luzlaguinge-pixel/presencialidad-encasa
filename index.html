@@ -89,7 +89,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 .days-counter{margin-top:8px;font-size:12px;color:#bbb;text-align:center;font-weight:500;}
 .submit-btn{width:100%;padding:14px;background:#516ADC;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;margin-top:16px;}
 .submit-btn:disabled{background:#c4ccf0;cursor:not-allowed;}
-/* CALENDARIO */
+/* BUSCAR */
+.buscar-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f2fa;flex-wrap:wrap;gap:8px;}
+.buscar-row:last-child{border:none;}
+.buscar-nombre{font-size:13px;font-weight:700;color:#1a1a2e;min-width:140px;}
+.buscar-semana-txt{font-size:11px;color:#aaa;font-weight:500;}
+.buscar-dias{display:flex;gap:4px;}
+.buscar-dia{border-radius:6px;padding:3px 6px;font-size:11px;font-weight:700;text-align:center;min-width:28px;}
+.buscar-dia.p{background:#e8fdf2;color:#0a7a4e;}
+.buscar-dia.r{background:#eef0fd;color:#3249b8;}
+.buscar-dia.x{background:#f4f4f4;color:#ccc;}
+
 .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .cal-nav-label{font-size:15px;font-weight:700;color:#333;}
 .cal-btn{background:#f0f2f9;border:none;border-radius:8px;width:32px;height:32px;font-size:18px;cursor:pointer;color:#516ADC;font-family:'Nunito',sans-serif;}
@@ -166,6 +176,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
         <button class="nav-tab" onclick="setTab('semana',this)">Semana</button>
         <button class="nav-tab" onclick="setTab('historial',this)">Historial</button>
         <button class="nav-tab" onclick="setTab('metricas',this)">M&#233;tricas</button>
+        <button class="nav-tab" onclick="setTab('buscar',this)">Buscar</button>
         <button class="nav-tab" onclick="setTab('cal-admin',this)">Calendario</button>
       </div>
       <div class="section visible" id="tab-hoy"><div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Cargando...</p></div></div>
@@ -177,6 +188,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
           <div class="metric-card"><div class="metric-label">Remoto hoy</div><div class="metric-value" id="m-rem">--</div></div>
           <div class="metric-card"><div class="metric-label">Registros semana</div><div class="metric-value" id="m-reg">--</div></div>
           <div class="metric-card"><div class="metric-label">Colaboradores</div><div class="metric-value" id="m-tot">--</div></div>
+        </div>
+      </div>
+      <div class="section" id="tab-buscar">
+        <div class="card">
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+            <input type="text" id="buscar-nombre" placeholder="Buscar por nombre..." oninput="filtrarBusqueda()" style="flex:2;min-width:150px;padding:10px 14px;border:1.5px solid #dde2f5;border-radius:10px;font-size:13px;font-family:'Nunito',sans-serif;outline:none;color:#1a1a2e;">
+            <select id="buscar-semana" onchange="filtrarBusqueda()" style="flex:1;min-width:150px;padding:10px 14px;border:1.5px solid #dde2f5;border-radius:10px;font-size:13px;font-family:'Nunito',sans-serif;outline:none;color:#1a1a2e;background:#fff;">
+              <option value="">Todas las semanas</option>
+            </select>
+          </div>
+          <div id="buscar-resultados"><p style="color:#bbb;font-size:13px;text-align:center;padding:20px;">Buscá un colaborador o seleccioná una semana</p></div>
         </div>
       </div>
       <div class="section" id="tab-cal-admin">
@@ -470,6 +492,59 @@ function switchColabTab(tab) {
   }
 }
 
+// ── BUSCAR ──────────────────────────────────────
+function cargarSelectorSemanas() {
+  var semanas = [];
+  todosRegistros.forEach(function(r) {
+    if (r.semana && semanas.indexOf(r.semana) === -1) semanas.push(r.semana);
+  });
+  semanas.sort(function(a,b){ return b.localeCompare(a); });
+  var sel = document.getElementById('buscar-semana');
+  sel.innerHTML = '<option value="">Todas las semanas</option>';
+  semanas.forEach(function(s) {
+    var opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+}
+
+function filtrarBusqueda() {
+  var nombre = document.getElementById('buscar-nombre').value.trim().toLowerCase();
+  var semana = document.getElementById('buscar-semana').value;
+  var ds = ['lun','mar','mie','jue','vie'];
+  var labels = ['Lun','Mar','Mié','Jue','Vie'];
+
+  if (!nombre && !semana) {
+    document.getElementById('buscar-resultados').innerHTML = '<p style="color:#bbb;font-size:13px;text-align:center;padding:20px;">Buscá un colaborador o seleccioná una semana</p>';
+    return;
+  }
+
+  var filtrados = todosRegistros.filter(function(r) {
+    var matchNombre = !nombre || r.nombre.toLowerCase().indexOf(nombre) !== -1;
+    var matchSemana = !semana || r.semana === semana;
+    return matchNombre && matchSemana;
+  });
+
+  if (filtrados.length === 0) {
+    document.getElementById('buscar-resultados').innerHTML = '<p style="color:#bbb;font-size:13px;text-align:center;padding:20px;">Sin resultados</p>';
+    return;
+  }
+
+  var html = filtrados.map(function(r) {
+    var diasHtml = ds.map(function(d, i) {
+      var cls = r[d] === 'presencial' ? 'p' : r[d] === 'remoto' ? 'r' : 'x';
+      var lbl = r[d] === 'presencial' ? 'P' : r[d] === 'remoto' ? 'R' : labels[i][0];
+      return '<div class="buscar-dia ' + cls + '" title="' + labels[i] + '">' + lbl + '</div>';
+    }).join('');
+    return '<div class="buscar-row">'
+      + '<div><div class="buscar-nombre">' + nc(r.nombre) + '</div><div class="buscar-semana-txt">' + r.semana + '</div></div>'
+      + '<div class="buscar-dias">' + diasHtml + '</div>'
+      + '</div>';
+  }).join('');
+
+  document.getElementById('buscar-resultados').innerHTML = html;
+}
+
 // ── CALENDARIO ──────────────────────────────────
 function renderCalendario(wrapId) {
   var hoy = new Date();
@@ -571,13 +646,19 @@ function cerrarModal(e) {
 
 // ── ADMIN ──────────────────────────────────────
 function cargarAdmin() {
+  // Cargar semana actual para las vistas principales
   api({action:'leer', semana:getSemana(0)}).then(function(data) {
     if (data.ok && data.registros && data.registros.length > 0) {
-      todosRegistros = data.registros;
       renderHoy(data.registros); renderSemana(data.registros); renderHistAdmin(data.registros); renderMetricas(data.registros);
     } else {
-      todosRegistros = [];
       document.getElementById('tab-hoy').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros esta semana</p></div>';
+    }
+  }).catch(function(){});
+  // Cargar todos los registros para el buscador y calendario
+  api({action:'leer'}).then(function(data) {
+    if (data.ok && data.registros) {
+      todosRegistros = data.registros;
+      cargarSelectorSemanas();
     }
   }).catch(function(){});
 }
