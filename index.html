@@ -665,19 +665,27 @@ function cerrarModal(e) {
 
 // ── ADMIN ──────────────────────────────────────
 function cargarAdmin() {
-  // Cargar semana actual para las vistas principales
-  api({action:'leer', semana:getSemana(0)}).then(function(data) {
-    if (data.ok && data.registros && data.registros.length > 0) {
-      renderHoy(data.registros); renderSemana(data.registros); renderHistAdmin(data.registros); renderMetricas(data.registros);
-    } else {
-      document.getElementById('tab-hoy').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros esta semana</p></div>';
-    }
-  }).catch(function(){});
-  // Cargar todos los registros para el buscador y calendario
+  // Una sola llamada para traer todos los registros
   api({action:'leer'}).then(function(data) {
-    if (data.ok && data.registros) {
+    if (data.ok && data.registros && data.registros.length > 0) {
       todosRegistros = data.registros;
       cargarSelectorSemanas();
+      // Filtrar semana actual para las vistas principales
+      var semanaActual = getSemana(0);
+      var regsHoy = data.registros.filter(function(r) { return r.semana === semanaActual; });
+      if (regsHoy.length > 0) {
+        renderHoy(regsHoy);
+        renderSemana(regsHoy);
+        renderHistAdmin(regsHoy);
+        renderMetricas(regsHoy);
+      } else {
+        document.getElementById('tab-hoy').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros esta semana</p></div>';
+        document.getElementById('tab-semana').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros esta semana</p></div>';
+        document.getElementById('tab-historial').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros</p></div>';
+      }
+    } else {
+      todosRegistros = [];
+      document.getElementById('tab-hoy').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros esta semana</p></div>';
     }
   }).catch(function(){});
 }
