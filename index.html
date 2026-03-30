@@ -207,8 +207,13 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
     </div>
 
     <!-- SEPARADOR ADMIN/COLAB -->
-    <div id="separador-admin" style="display:none;border-top:2px dashed #e8ecf8;margin:8px 0 16px;"></div>
-    <div id="label-mi-semana" style="display:none;font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Mi semana</div>
+    <div id="separador-admin" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:16px 0 8px;">
+        <span style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;">Mi semana</span>
+        <button onclick="toggleMiSemana()" id="btn-toggle-mi-semana" style="background:none;border:none;font-size:12px;color:#516ADC;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:600;">Ocultar ▲</button>
+      </div>
+      <div style="border-top:1px solid #e8ecf8;margin-bottom:12px;"></div>
+    </div>
 
     <!-- COLABORADOR -->
     <div id="vista-colab" style="display:none;">
@@ -346,7 +351,6 @@ function mostrarApp() {
   if (usuario.rol === 'admin') {
     document.getElementById('vista-admin').style.display = 'block';
     document.getElementById('separador-admin').style.display = 'block';
-    document.getElementById('label-mi-semana').style.display = 'block';
     cargarAdmin();
   }
   document.getElementById('vista-colab').style.display = 'block';
@@ -464,7 +468,6 @@ function cerrarSesion() {
   document.getElementById('app-screen').style.display = 'none';
   document.getElementById('vista-admin').style.display = 'none';
   document.getElementById('separador-admin').style.display = 'none';
-  document.getElementById('label-mi-semana').style.display = 'none';
   document.getElementById('vista-colab').style.display = 'none';
   document.getElementById('dni-input').value = '';
   document.getElementById('login-btn').textContent = 'Ingresar';
@@ -498,6 +501,14 @@ function switchColabTab(tab) {
     calModo = 'colab';
     renderCalendario('cal-colab-wrap');
   }
+}
+
+var miSemanaVisible = true;
+
+function toggleMiSemana() {
+  miSemanaVisible = !miSemanaVisible;
+  document.getElementById('vista-colab').style.display = miSemanaVisible ? 'block' : 'none';
+  document.getElementById('btn-toggle-mi-semana').textContent = miSemanaVisible ? 'Ocultar ▲' : 'Mostrar ▼';
 }
 
 // ── BUSCAR ──────────────────────────────────────
