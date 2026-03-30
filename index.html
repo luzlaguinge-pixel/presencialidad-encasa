@@ -285,7 +285,7 @@ function getSemana(off) {
   var vie = new Date(lun);
   vie.setDate(lun.getDate() + 4);
   var fmt = function(f) { return f.toLocaleDateString('es-AR', {day:'2-digit',month:'short'}); };
-  return fmt(lun) + '-' + fmt(vie) + ' ' + lun.getFullYear();
+  return fmt(lun) + '\u2013' + fmt(vie) + ' ' + lun.getFullYear();
 }
 
 function getSemanaParaFecha(fecha) {
@@ -295,7 +295,7 @@ function getSemanaParaFecha(fecha) {
   var vie = new Date(lun);
   vie.setDate(lun.getDate() + 4);
   var fmt = function(f) { return f.toLocaleDateString('es-AR', {day:'2-digit',month:'short'}); };
-  return fmt(lun) + '-' + fmt(vie) + ' ' + lun.getFullYear();
+  return fmt(lun) + '\u2013' + fmt(vie) + ' ' + lun.getFullYear();
 }
 
 function getDiaKey(fecha) {
