@@ -172,6 +172,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
         <button id="btn-registro" onclick="mostrarVistaRegistro()" style="flex:1;padding:10px;background:#516ADC;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Registrar semana</button>
         <button id="btn-calendario" onclick="mostrarVistaCalendario()" style="flex:1;padding:10px;background:#f0f2f9;color:#516ADC;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Calendario</button>
       </div>
+      <div id="cal-colab-card" style="display:none;">
+        <div id="cal-colab-contenido"></div>
+      </div>
           <span class="icon">&#10003;</span>
           <span class="txt" id="banner-texto"></span>
         </div>
@@ -195,9 +198,6 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
         </div>
         <div class="days-counter" id="dias-contador">0 de 5 días definidos</div>
         <button class="submit-btn" id="guardar-btn" onclick="guardarSemana()" disabled>Guardar semana</button>
-      </div>
-      <div class="card" id="cal-colab-card" style="display:none;">
-        <div id="cal-colab-contenido"></div>
       </div>
       <div class="card">
         <div class="card-title">Mi historial</div>
