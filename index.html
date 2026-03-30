@@ -108,6 +108,17 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
   </div>
 </div>
 
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="cerrarModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-titulo"></div>
+      <button class="modal-close" onclick="cerrarModal()">&#215;</button>
+    </div>
+    <div id="modal-contenido"></div>
+  </div>
+</div>
+
 <div id="app-screen">
   <div class="topbar">
     <div class="topbar-left">
@@ -130,6 +141,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
         <button class="nav-tab" onclick="setTab('semana',this)">Semana</button>
         <button class="nav-tab" onclick="setTab('historial',this)">Historial</button>
         <button class="nav-tab" onclick="setTab('metricas',this)">Métricas</button>
+        <button class="nav-tab" onclick="setTab('cal-admin',this)">Calendario</button>
       </div>
       <div class="section visible" id="tab-hoy"><div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Cargando...</p></div></div>
       <div class="section" id="tab-semana"><div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Cargando...</p></div></div>
@@ -142,6 +154,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
           <div class="metric-card"><div class="metric-label">Colaboradores</div><div class="metric-value" id="m-tot">--</div></div>
         </div>
       </div>
+      <div class="section" id="tab-cal-admin">
+        <div class="card" id="cal-admin-contenido"></div>
+      </div>
     </div>
 
     <div id="vista-colab" style="display:none;">
@@ -153,7 +168,10 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
             <div class="self-dni" id="colab-dni"></div>
           </div>
         </div>
-        <div id="success-banner" class="success-banner">
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button id="btn-registro" onclick="mostrarVistaRegistro()" style="flex:1;padding:10px;background:#516ADC;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Registrar semana</button>
+        <button id="btn-calendario" onclick="mostrarVistaCalendario()" style="flex:1;padding:10px;background:#f0f2f9;color:#516ADC;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Calendario</button>
+      </div>
           <span class="icon">&#10003;</span>
           <span class="txt" id="banner-texto"></span>
         </div>
@@ -177,6 +195,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
         </div>
         <div class="days-counter" id="dias-contador">0 de 5 días definidos</div>
         <button class="submit-btn" id="guardar-btn" onclick="guardarSemana()" disabled>Guardar semana</button>
+      </div>
+      <div class="card" id="cal-colab-card" style="display:none;">
+        <div id="cal-colab-contenido"></div>
       </div>
       <div class="card">
         <div class="card-title">Mi historial</div>
@@ -383,16 +404,19 @@ function setTab(nombre, btn) {
   document.querySelectorAll('.nav-tab').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('tab-' + nombre).classList.add('visible');
   btn.classList.add('active');
+  if (nombre === 'cal-admin') renderCalendarioAdmin();
 }
 
 function cargarAdmin() {
   api({action:'leer', semana:getSemana(0)}).then(function(data) {
     if (data.ok && data.registros && data.registros.length > 0) {
+      todosRegistros = data.registros;
       renderHoy(data.registros);
       renderSemana(data.registros);
       renderHistAdmin(data.registros);
       renderMetricas(data.registros);
     } else {
+      todosRegistros = [];
       document.getElementById('tab-hoy').innerHTML = '<div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Sin registros esta semana</p></div>';
     }
   }).catch(function(){});
@@ -452,6 +476,179 @@ function renderMetricas(rr) {
   document.getElementById('m-rem').textContent = rr.filter(function(r){return r[dk]==='remoto';}).length;
   document.getElementById('m-reg').textContent = rr.length;
   document.getElementById('m-tot').textContent = rr.length;
+}
+
+// ── CALENDARIO ──────────────────────────────────────────
+var calMes = new Date().getMonth();
+var calAnio = new Date().getFullYear();
+var todosRegistros = [];
+var vistaColabActual = 'registro'; // 'registro' | 'calendario'
+
+var MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var DIAS_SEMANA = ['L','M','M','J','V','S','D'];
+
+function mostrarVistaRegistro() {
+  vistaColabActual = 'registro';
+  document.getElementById('btn-registro').style.background = '#516ADC';
+  document.getElementById('btn-registro').style.color = '#fff';
+  document.getElementById('btn-calendario').style.background = '#f0f2f9';
+  document.getElementById('btn-calendario').style.color = '#516ADC';
+  document.getElementById('reg-form').style.display = 'block';
+  document.getElementById('success-banner').style.display = 'none';
+  document.getElementById('cal-colab-card').style.display = 'none';
+}
+
+function mostrarVistaCalendario() {
+  vistaColabActual = 'calendario';
+  document.getElementById('btn-calendario').style.background = '#516ADC';
+  document.getElementById('btn-calendario').style.color = '#fff';
+  document.getElementById('btn-registro').style.background = '#f0f2f9';
+  document.getElementById('btn-registro').style.color = '#516ADC';
+  document.getElementById('reg-form').style.display = 'none';
+  document.getElementById('success-banner').style.display = 'none';
+  document.getElementById('cal-colab-card').style.display = 'block';
+  renderCalendarioColab();
+}
+
+function renderCalendario(contenedorId, onClickDia) {
+  var hoy = new Date();
+  var primerDia = new Date(calAnio, calMes, 1);
+  var ultimoDia = new Date(calAnio, calMes + 1, 0);
+  var inicioGrid = new Date(primerDia);
+  var diaSemana = primerDia.getDay();
+  inicioGrid.setDate(primerDia.getDate() - (diaSemana === 0 ? 6 : diaSemana - 1));
+
+  var html = '<div class="cal-nav">'
+    + '<button class="cal-btn" onclick="cambiarMes(-1)">&#8249;</button>'
+    + '<span class="cal-nav-label">' + MESES[calMes] + ' ' + calAnio + '</span>'
+    + '<button class="cal-btn" onclick="cambiarMes(1)">&#8250;</button>'
+    + '</div>'
+    + '<div class="cal-grid">'
+    + DIAS_SEMANA.map(function(d){ return '<div class="cal-header">'+d+'</div>'; }).join('');
+
+  var cursor = new Date(inicioGrid);
+  for (var i = 0; i < 42; i++) {
+    var esEsteMes = cursor.getMonth() === calMes;
+    var esHoy = cursor.toDateString() === hoy.toDateString();
+    var esFinde = cursor.getDay() === 0 || cursor.getDay() === 6;
+    var fechaStr = cursor.toISOString().slice(0,10);
+    var clases = 'cal-day' + (esEsteMes ? '' : ' otro-mes') + (esHoy ? ' hoy' : '') + (esFinde ? ' fin-semana' : '');
+    var dots = onClickDia(cursor, fechaStr, true);
+    html += '<div class="' + clases + '" onclick="abrirModal(\'' + fechaStr + '\')">'
+      + '<div class="cal-day-num">' + cursor.getDate() + '</div>'
+      + '<div class="cal-dots">' + dots + '</div>'
+      + '</div>';
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  html += '</div>';
+  document.getElementById(contenedorId).innerHTML = html;
+}
+
+function renderCalendarioColab() {
+  renderCalendario('cal-colab-contenido', function(fecha, fechaStr, soloDotsFlag) {
+    var dia = getDiaKey(fecha);
+    if (!dia) return '';
+    var reg = usuario.historial.find(function(r) {
+      return getSemanaParaFecha(fecha) === r.semana;
+    });
+    if (!reg || !reg[dia]) return '';
+    return '<div class="cal-dot ' + (reg[dia] === 'presencial' ? 'p' : 'r') + '"></div>';
+  });
+}
+
+function renderCalendarioAdmin() {
+  renderCalendario('cal-admin-contenido', function(fecha, fechaStr, soloDotsFlag) {
+    var dia = getDiaKey(fecha);
+    if (!dia) return '';
+    var semana = getSemanaParaFecha(fecha);
+    var regs = todosRegistros.filter(function(r){ return r.semana === semana; });
+    var pres = regs.filter(function(r){ return r[dia] === 'presencial'; }).length;
+    var rem = regs.filter(function(r){ return r[dia] === 'remoto'; }).length;
+    var dots = '';
+    for (var p = 0; p < Math.min(pres, 3); p++) dots += '<div class="cal-dot p"></div>';
+    for (var r = 0; r < Math.min(rem, 3); r++) dots += '<div class="cal-dot r"></div>';
+    return dots;
+  });
+}
+
+function cambiarMes(delta) {
+  calMes += delta;
+  if (calMes > 11) { calMes = 0; calAnio++; }
+  if (calMes < 0) { calMes = 11; calAnio--; }
+  if (usuario && usuario.rol === 'admin' && document.getElementById('tab-cal-admin').classList.contains('visible')) {
+    renderCalendarioAdmin();
+  } else {
+    renderCalendarioColab();
+  }
+}
+
+function getDiaKey(fecha) {
+  var d = fecha.getDay();
+  if (d === 0 || d === 6) return null;
+  return ['','lun','mar','mie','jue','vie'][d];
+}
+
+function getSemanaParaFecha(fecha) {
+  var d = fecha.getDay();
+  var lun = new Date(fecha);
+  lun.setDate(fecha.getDate() - (d === 0 ? 6 : d - 1));
+  var vie = new Date(lun);
+  vie.setDate(lun.getDate() + 4);
+  var fmt = function(f) { return f.toLocaleDateString('es-AR', {day:'2-digit',month:'short'}); };
+  return fmt(lun) + '-' + fmt(vie) + ' ' + lun.getFullYear();
+}
+
+function abrirModal(fechaStr) {
+  var fecha = new Date(fechaStr + 'T12:00:00');
+  if (fecha.getDay() === 0 || fecha.getDay() === 6) return;
+  var dia = getDiaKey(fecha);
+  var semana = getSemanaParaFecha(fecha);
+  var titulo = fecha.toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long'});
+  titulo = titulo.charAt(0).toUpperCase() + titulo.slice(1);
+  document.getElementById('modal-titulo').textContent = titulo;
+
+  var html = '';
+  if (usuario.rol === 'admin') {
+    var regs = todosRegistros.filter(function(r){ return r.semana === semana; });
+    var pres = regs.filter(function(r){ return r[dia] === 'presencial'; });
+    var rem = regs.filter(function(r){ return r[dia] === 'remoto'; });
+    if (pres.length === 0 && rem.length === 0) {
+      html = '<div class="modal-empty">Sin registros para este día</div>';
+    } else {
+      if (pres.length > 0) {
+        html += '<div class="pill-group-label">Presencial (' + pres.length + ')</div><div class="pill-row" style="margin-bottom:12px;">'
+          + pres.map(function(r){ return '<div class="pill presencial"><div class="pill-dot"></div>' + nc(r.nombre) + '</div>'; }).join('') + '</div>';
+      }
+      if (rem.length > 0) {
+        html += '<div class="pill-group-label">Remoto (' + rem.length + ')</div><div class="pill-row">'
+          + rem.map(function(r){ return '<div class="pill remoto"><div class="pill-dot"></div>' + nc(r.nombre) + '</div>'; }).join('') + '</div>';
+      }
+    }
+  } else {
+    var reg = usuario.historial.find(function(r){ return r.semana === semana; });
+    var val = reg ? reg[dia] : null;
+    if (!val) {
+      html = '<div class="modal-empty">Sin registro para este día</div>';
+    } else {
+      html = '<div class="pill presencial" style="display:inline-flex;">'
+        + (val === 'presencial'
+          ? '<div class="pill-dot" style="background:#1aba7c;"></div> Presencial'
+          : '<div class="pill-dot" style="background:#516ADC;"></div> Remoto')
+        + '</div>';
+      html = '<div style="padding:8px 0;">' + (val === 'presencial'
+        ? '<div class="pill presencial" style="display:inline-flex;"><div class="pill-dot"></div>Presencial</div>'
+        : '<div class="pill remoto" style="display:inline-flex;"><div class="pill-dot"></div>Remoto</div>')
+        + '</div>';
+    }
+  }
+  document.getElementById('modal-contenido').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('visible');
+}
+
+function cerrarModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay') || !e.target) {
+    document.getElementById('modal-overlay').classList.remove('visible');
+  }
 }
 
 document.getElementById('dni-input').addEventListener('keydown', function(e) {
