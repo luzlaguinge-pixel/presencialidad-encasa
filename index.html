@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>&#191;C&#243;mo trabaj&#225;s esta semana? &#8212; En Casa</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
@@ -129,6 +130,16 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 .masiva-cell.cell-r{background:#eef0fd;color:#3249b8;}
 .masiva-input{width:100%;padding:7px 8px;border:1.5px solid #dde2f5;border-radius:8px;font-size:12px;font-family:'Nunito',sans-serif;outline:none;color:#1a1a2e;background:#fafbff;}
 .masiva-input:focus{border-color:#516ADC;}
+/* Drop zone Excel */
+.drop-zone{border:2px dashed #c4ccf0;border-radius:12px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.2s;background:#fafbff;}
+.drop-zone:hover,.drop-zone.drag-over{border-color:#516ADC;background:#f0f2ff;}
+.drop-zone-icon{font-size:28px;margin-bottom:6px;}
+.drop-zone-txt{font-size:13px;color:#888;font-weight:600;}
+.drop-zone-sub{font-size:11px;color:#bbb;margin-top:3px;}
+.drop-zone.loaded{border-color:#1aba7c;background:#f0fdf7;}
+.drop-zone.loaded .drop-zone-txt{color:#0a7a4e;}
+.drop-zone.error{border-color:#e03131;background:#fff5f5;}
+.drop-zone.error .drop-zone-txt{color:#e03131;}
 /* REGISTRAR POR COLABORADOR */
 .reg-colab-header{display:flex;align-items:center;gap:10px;padding:12px;background:#f4f6ff;border-radius:12px;margin-bottom:14px;}
 .reg-colab-avatar{width:36px;height:36px;border-radius:50%;background:#eef0fd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#516ADC;flex-shrink:0;}
@@ -284,12 +295,30 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
           </div>
           <button onclick="agregarFilaMasiva()" style="margin-top:8px;padding:8px 14px;background:#f0f2f9;color:#516ADC;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">+ Agregar fila</button>
 
-          <!-- Importar CSV -->
+          <!-- Importar Excel / CSV -->
           <div style="margin-top:14px;border-top:1px solid #f0f2fa;padding-top:14px;">
-            <div style="font-size:11px;color:#aaa;font-weight:600;margin-bottom:6px;">&#128196; Importar desde Excel/CSV</div>
-            <div style="font-size:11px;color:#bbb;margin-bottom:8px;">Formato: <span style="font-family:monospace;background:#f4f4f4;padding:2px 5px;border-radius:4px;">DNI;Nombre;Lun;Mar;Mi&#233;;Jue;Vie</span> — usar P (presencial) o R (remoto)</div>
-            <textarea id="csv-input" placeholder="30123456;Juan García;P;R;P;R;P&#10;28456789;María López;R;R;P;P;R" style="width:100%;padding:10px 14px;border:1.5px solid #dde2f5;border-radius:10px;font-size:12px;font-family:'Nunito',sans-serif;outline:none;color:#1a1a2e;height:80px;resize:vertical;"></textarea>
-            <button onclick="parsearCSV()" style="margin-top:6px;padding:8px 14px;background:#f0f2f9;color:#516ADC;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Importar</button>
+            <div style="font-size:11px;color:#aaa;font-weight:600;margin-bottom:10px;">&#128196; Importar desde archivo o pegando texto</div>
+
+            <!-- Drop zone para Excel/CSV -->
+            <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv" style="display:none;" onchange="importarArchivoExcel(this)">
+            <div class="drop-zone" id="drop-zone"
+              onclick="document.getElementById('excel-file-input').click()"
+              ondragover="dropZoneDragOver(event)"
+              ondragleave="dropZoneDragLeave(event)"
+              ondrop="dropZoneDrop(event)">
+              <div class="drop-zone-icon">&#128229;</div>
+              <div class="drop-zone-txt" id="drop-zone-txt">Hacé clic o arrastrá un archivo</div>
+              <div class="drop-zone-sub">.xlsx, .xls o .csv — Primera fila debe ser encabezado o datos directamente</div>
+            </div>
+
+            <!-- Pegado manual CSV -->
+            <div style="margin-top:10px;">
+              <div style="font-size:11px;color:#bbb;margin-bottom:6px;">O pegá filas directamente: <span style="font-family:monospace;background:#f4f4f4;padding:2px 5px;border-radius:4px;">DNI;Nombre;Lun;Mar;Mi&#233;;Jue;Vie</span> &mdash; P o R</div>
+              <div style="display:flex;gap:8px;align-items:flex-start;">
+                <textarea id="csv-input" placeholder="30123456;Juan García;P;R;P;R;P&#10;28456789;María López;R;R;P;P;R" style="flex:1;padding:10px 14px;border:1.5px solid #dde2f5;border-radius:10px;font-size:12px;font-family:'Nunito',sans-serif;outline:none;color:#1a1a2e;height:72px;resize:vertical;"></textarea>
+                <button onclick="parsearCSV()" style="padding:10px 14px;background:#f0f2f9;color:#516ADC;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;align-self:stretch;">Importar</button>
+              </div>
+            </div>
           </div>
 
           <!-- Resultado -->
@@ -1083,6 +1112,104 @@ function actualizarEnviarMasiva() {
     btn.textContent = 'Guardar ' + validos + ' registro' + (validos !== 1 ? 's' : '');
   } else {
     wrap.style.display = 'none';
+  }
+}
+
+// ── DROP ZONE ────────────────────────────────────
+function dropZoneDragOver(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.add('drag-over');
+}
+function dropZoneDragLeave(e) {
+  document.getElementById('drop-zone').classList.remove('drag-over');
+}
+function dropZoneDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag-over');
+  var file = e.dataTransfer.files[0];
+  if (file) procesarArchivoExcel(file);
+}
+function importarArchivoExcel(input) {
+  var file = input.files[0];
+  if (file) procesarArchivoExcel(file);
+  input.value = ''; // reset para permitir recargar el mismo archivo
+}
+function procesarArchivoExcel(file) {
+  var dz = document.getElementById('drop-zone');
+  var dzTxt = document.getElementById('drop-zone-txt');
+  // Validar extensión
+  var ext = file.name.split('.').pop().toLowerCase();
+  if (!['xlsx','xls','csv'].includes(ext)) {
+    dz.className = 'drop-zone error';
+    dzTxt.textContent = 'Formato no soportado. Usá .xlsx, .xls o .csv';
+    return;
+  }
+  dzTxt.textContent = 'Leyendo archivo...';
+  dz.className = 'drop-zone';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = e.target.result;
+      var workbook;
+      if (ext === 'csv') {
+        workbook = XLSX.read(data, {type:'string'});
+      } else {
+        workbook = XLSX.read(data, {type:'array'});
+      }
+      var sheet = workbook.Sheets[workbook.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''});
+      if (!rows || rows.length === 0) throw new Error('Archivo vacío');
+      // Detectar si la primera fila es encabezado
+      var primeraFila = rows[0].map(function(c){return String(c).toLowerCase().trim();});
+      var tieneEncabezado = primeraFila.some(function(c){
+        return c === 'dni' || c === 'nombre' || c === 'lun' || c === 'lunes';
+      });
+      var dataRows = tieneEncabezado ? rows.slice(1) : rows;
+      // Detectar columnas si tiene encabezado
+      var colDni=0, colNombre=1, colLun=2, colMar=3, colMie=4, colJue=5, colVie=6;
+      if (tieneEncabezado) {
+        primeraFila.forEach(function(c,i){
+          if (c==='dni') colDni=i;
+          else if (c==='nombre' || c==='apellido y nombre' || c==='nombre completo') colNombre=i;
+          else if (c==='lun' || c==='lunes') colLun=i;
+          else if (c==='mar' || c==='martes') colMar=i;
+          else if (c==='mi\u00e9' || c==='mie' || c==='mi\u00e9rcoles' || c==='miercoles') colMie=i;
+          else if (c==='jue' || c==='jueves') colJue=i;
+          else if (c==='vie' || c==='viernes') colVie=i;
+        });
+      }
+      var mapVal = function(v) {
+        v = String(v||'').trim().toUpperCase();
+        if (v==='P'||v==='PRESENCIAL') return 'presencial';
+        if (v==='R'||v==='REMOTO') return 'remoto';
+        return null;
+      };
+      var agregados = 0;
+      dataRows.forEach(function(row) {
+        if (!row || row.length === 0) return;
+        var dni = String(row[colDni]||'').trim();
+        var nombre = String(row[colNombre]||'').trim();
+        if (!dni && !nombre) return; // fila vacía
+        var lun = mapVal(row[colLun]);
+        var mar = mapVal(row[colMar]);
+        var mie = mapVal(row[colMie]);
+        var jue = mapVal(row[colJue]);
+        var vie = mapVal(row[colVie]);
+        masivaFilas.push({dni:dni, nombre:nombre, lun:lun, mar:mar, mie:mie, jue:jue, vie:vie});
+        agregados++;
+      });
+      dz.className = 'drop-zone loaded';
+      dzTxt.textContent = '\u2713 ' + file.name + ' — ' + agregados + ' fila' + (agregados!==1?'s':'') + ' importada' + (agregados!==1?'s':'');
+      renderMasivaTabla();
+    } catch(err) {
+      dz.className = 'drop-zone error';
+      dzTxt.textContent = 'Error al leer el archivo. Verificá el formato.';
+    }
+  };
+  if (ext === 'csv') {
+    reader.readAsText(file, 'UTF-8');
+  } else {
+    reader.readAsArrayBuffer(file);
   }
 }
 
