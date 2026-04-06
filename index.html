@@ -37,7 +37,8 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 .nav-tabs::-webkit-scrollbar{display:none;}
 .nav-tab{flex:0 0 auto;padding:8px 12px;text-align:center;font-size:12px;border-radius:10px;cursor:pointer;border:none;background:transparent;color:#999;font-family:'Nunito',sans-serif;font-weight:600;white-space:nowrap;}
 .nav-tab.active{background:#516ADC;color:#fff;}
-.nav-tab.icon-tab{padding:8px 11px;font-size:15px;}
+.nav-tab.icon-tab{padding:8px 11px;display:flex;align-items:center;justify-content:center;}
+.nav-tab.icon-tab svg{display:block;}
 .card{background:#fff;border:1px solid #e8ecf8;border-radius:16px;padding:16px;margin-bottom:12px;}
 .card-title{font-size:12px;color:#aaa;margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
 .section{display:none;}
@@ -187,7 +188,7 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 </head>
 <body>
 <!-- MODAL -->
-<div id="modal-overlay" onclick="cerrarModal(event)">
+<div id="modal-overlay" class="modal-overlay" onclick="cerrarModal(event)">
   <div class="modal">
     <div class="modal-top">
       <div class="modal-header">
@@ -241,9 +242,9 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
         <button class="nav-tab" onclick="setTab('registrar',this)">Registrar</button>
         <button class="nav-tab" onclick="setTab('masiva',this)">Masiva</button>
         <button class="nav-tab" onclick="setTab('cal-admin',this)">Calendario</button>
-        <button class="nav-tab icon-tab" onclick="setTab('buscar',this)" title="Buscar colaborador">&#128269;</button>
         <button class="nav-tab" onclick="setTab('historial',this)">Historial</button>
         <button class="nav-tab" onclick="setTab('metricas',this)">M&#233;tricas</button>
+        <button class="nav-tab icon-tab" onclick="setTab('buscar',this)" title="Buscar colaborador"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
       </div>
 
       <div class="section visible" id="tab-hoy"><div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Cargando...</p></div></div>
