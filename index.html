@@ -33,10 +33,11 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 #app-screen{display:none;}
 .content{padding:16px;max-width:700px;margin:0 auto;}
 /* Nav tabs — scrollable para admins con muchas opciones */
-.nav-tabs{display:flex;gap:3px;margin-bottom:16px;background:#fff;padding:4px;border-radius:14px;border:1px solid #e8ecf8;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.nav-tabs{display:flex;gap:3px;margin-bottom:16px;background:#fff;padding:4px;border-radius:14px;border:1px solid #e8ecf8;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;justify-content:center;}
 .nav-tabs::-webkit-scrollbar{display:none;}
-.nav-tab{flex:0 0 auto;padding:8px 10px;text-align:center;font-size:12px;border-radius:10px;cursor:pointer;border:none;background:transparent;color:#999;font-family:'Nunito',sans-serif;font-weight:600;white-space:nowrap;}
+.nav-tab{flex:0 0 auto;padding:8px 12px;text-align:center;font-size:12px;border-radius:10px;cursor:pointer;border:none;background:transparent;color:#999;font-family:'Nunito',sans-serif;font-weight:600;white-space:nowrap;}
 .nav-tab.active{background:#516ADC;color:#fff;}
+.nav-tab.icon-tab{padding:8px 11px;font-size:15px;}
 .card{background:#fff;border:1px solid #e8ecf8;border-radius:16px;padding:16px;margin-bottom:12px;}
 .card-title{font-size:12px;color:#aaa;margin-bottom:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
 .section{display:none;}
@@ -118,12 +119,33 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 .cal-dot.p{background:#1aba7c;}
 .cal-dot.r{background:#516ADC;}
 /* MODAL */
-.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
-.modal{background:#fff;border-radius:20px;padding:24px;width:100%;max-width:380px;}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.modal-title{font-size:16px;font-weight:700;color:#1a1a2e;text-transform:capitalize;}
-.modal-close{background:none;border:none;font-size:24px;color:#aaa;cursor:pointer;line-height:1;}
-.modal-empty{color:#bbb;font-size:13px;text-align:center;padding:20px 0;}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:460px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px rgba(30,42,120,0.18);}
+.modal-top{padding:20px 20px 0;flex-shrink:0;}
+.modal-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:12px;}
+.modal-title{font-size:15px;font-weight:700;color:#1a1a2e;text-transform:capitalize;line-height:1.3;}
+.modal-close{background:none;border:none;font-size:22px;color:#bbb;cursor:pointer;line-height:1;flex-shrink:0;margin-top:-2px;}
+.modal-close:hover{color:#666;}
+.modal-search{width:100%;padding:10px 14px 10px 36px;border:1.5px solid #dde2f5;border-radius:10px;font-size:13px;font-family:'Nunito',sans-serif;outline:none;color:#1a1a2e;background:#fafbff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 11px center;}
+.modal-search:focus{border-color:#516ADC;}
+.modal-search-wrap{padding:10px 20px 12px;flex-shrink:0;border-bottom:1px solid #f0f2fa;}
+.modal-body{overflow-y:auto;flex:1;padding:16px 20px;}
+.modal-body::-webkit-scrollbar{width:4px;}
+.modal-body::-webkit-scrollbar-track{background:transparent;}
+.modal-body::-webkit-scrollbar-thumb{background:#e0e4f5;border-radius:4px;}
+.modal-empty{color:#bbb;font-size:13px;text-align:center;padding:24px 0;}
+.modal-section-title{font-size:11px;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.modal-count{background:#f0f2f9;color:#516ADC;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:700;}
+.modal-count.p{background:#e8fdf2;color:#0a7a4e;}
+.modal-count.r{background:#eef0fd;color:#3249b8;}
+.modal-list{display:flex;flex-direction:column;gap:4px;margin-bottom:16px;}
+.modal-person{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:10px;background:#fafbff;font-size:13px;font-weight:600;color:#1a1a2e;}
+.modal-person.p{background:#f0fdf8;}
+.modal-person.r{background:#f1f2fe;}
+.modal-person-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.modal-person.p .modal-person-dot{background:#1aba7c;}
+.modal-person.r .modal-person-dot{background:#516ADC;}
+.modal-no-results{color:#bbb;font-size:13px;text-align:center;padding:16px 0;}
 /* CARGA MASIVA */
 .masiva-cell{cursor:pointer;border-radius:6px;padding:4px 2px;font-weight:700;font-size:12px;min-width:26px;display:inline-block;text-align:center;background:#f4f4f4;color:#ccc;user-select:none;}
 .masiva-cell.cell-p{background:#e8fdf2;color:#0a7a4e;}
@@ -140,6 +162,24 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 .drop-zone.loaded .drop-zone-txt{color:#0a7a4e;}
 .drop-zone.error{border-color:#e03131;background:#fff5f5;}
 .drop-zone.error .drop-zone-txt{color:#e03131;}
+/* HISTORIAL MASIVA */
+.hist-masiva-item{border-bottom:1px solid #f0f2fa;padding:11px 0;}
+.hist-masiva-item:last-child{border:none;padding-bottom:0;}
+.hist-masiva-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.hist-masiva-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.hist-masiva-quien{font-size:13px;font-weight:700;color:#1a1a2e;}
+.hist-masiva-semana{font-size:12px;color:#888;font-weight:600;}
+.hist-masiva-fecha{font-size:11px;color:#bbb;font-weight:500;}
+.hist-masiva-badges{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.hist-masiva-ok{background:#e8fdf2;color:#0a7a4e;font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;}
+.hist-masiva-err{background:#ffeaea;color:#e03131;font-size:11px;font-weight:700;padding:3px 9px;border-radius:10px;}
+.hist-masiva-toggle{background:none;border:none;font-size:11px;color:#516ADC;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;margin-top:5px;padding:0;}
+.hist-masiva-detalle{margin-top:8px;display:none;flex-wrap:wrap;gap:5px;}
+.hist-masiva-detalle.open{display:flex;}
+.hist-masiva-pill{font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px;}
+.hist-masiva-pill.p{background:#e8fdf2;color:#0a7a4e;}
+.hist-masiva-pill.r{background:#eef0fd;color:#3249b8;}
+.hist-masiva-pill.x{background:#f4f4f4;color:#bbb;}
 /* REGISTRAR POR COLABORADOR */
 .reg-colab-header{display:flex;align-items:center;gap:10px;padding:12px;background:#f4f6ff;border-radius:12px;margin-bottom:14px;}
 .reg-colab-avatar{width:36px;height:36px;border-radius:50%;background:#eef0fd;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#516ADC;flex-shrink:0;}
@@ -147,13 +187,18 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
 </head>
 <body>
 <!-- MODAL -->
-<div id="modal-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;" onclick="cerrarModal(event)">
+<div id="modal-overlay" onclick="cerrarModal(event)">
   <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title" id="modal-titulo"></div>
-      <button class="modal-close" onclick="cerrarModal()">&#215;</button>
+    <div class="modal-top">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-titulo"></div>
+        <button class="modal-close" onclick="cerrarModal()">&#215;</button>
+      </div>
     </div>
-    <div id="modal-contenido"></div>
+    <div class="modal-search-wrap" id="modal-search-wrap" style="display:none;">
+      <input class="modal-search" id="modal-search-input" type="text" placeholder="Buscar colaborador..." oninput="filtrarModal(this.value)">
+    </div>
+    <div class="modal-body" id="modal-contenido"></div>
   </div>
 </div>
 
@@ -193,12 +238,12 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
       <div class="nav-tabs">
         <button class="nav-tab active" onclick="setTab('hoy',this)">Hoy</button>
         <button class="nav-tab" onclick="setTab('semana',this)">Semana</button>
-        <button class="nav-tab" onclick="setTab('historial',this)">Historial</button>
-        <button class="nav-tab" onclick="setTab('metricas',this)">M&#233;tricas</button>
-        <button class="nav-tab" onclick="setTab('buscar',this)">Buscar</button>
-        <button class="nav-tab" onclick="setTab('cal-admin',this)">Calendario</button>
         <button class="nav-tab" onclick="setTab('registrar',this)">Registrar</button>
         <button class="nav-tab" onclick="setTab('masiva',this)">Masiva</button>
+        <button class="nav-tab" onclick="setTab('cal-admin',this)">Calendario</button>
+        <button class="nav-tab icon-tab" onclick="setTab('buscar',this)" title="Buscar colaborador">&#128269;</button>
+        <button class="nav-tab" onclick="setTab('historial',this)">Historial</button>
+        <button class="nav-tab" onclick="setTab('metricas',this)">M&#233;tricas</button>
       </div>
 
       <div class="section visible" id="tab-hoy"><div class="card"><p style="color:#aaa;text-align:center;padding:20px;font-size:13px;">Cargando...</p></div></div>
@@ -335,6 +380,15 @@ body{font-family:'Nunito',sans-serif;background:#f0f2f9;min-height:100vh;}
             <button class="submit-btn" id="btn-enviar-masiva" onclick="enviarMasiva()">Guardar registros</button>
           </div>
         </div>
+      </div>
+
+      <!-- HISTORIAL DE CARGAS MASIVAS -->
+      <div class="card" id="masiva-historial-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div class="card-title" style="margin-bottom:0;">Historial de cargas</div>
+          <button onclick="limpiarHistorialMasiva()" id="btn-limpiar-hist" style="display:none;background:none;border:none;font-size:11px;color:#ccc;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:600;">Limpiar</button>
+        </div>
+        <div id="masiva-historial-lista"><p style="color:#bbb;font-size:13px;text-align:center;padding:12px 0;">Todav&#237;a no se realizaron cargas masivas</p></div>
       </div>
 
     </div><!-- fin vista-admin -->
@@ -748,6 +802,10 @@ function cambiarMes(delta, wrapId) {
   if (calMes < 0) { calMes = 11; calAnio--; }
   renderCalendario(wrapId);
 }
+// Datos del modal para búsqueda
+var modalPres = [];
+var modalRem = [];
+
 function abrirModal(fechaStr) {
   var partes = fechaStr.split('-');
   var fecha = new Date(parseInt(partes[0]), parseInt(partes[1])-1, parseInt(partes[2]));
@@ -756,34 +814,90 @@ function abrirModal(fechaStr) {
   var semana = getSemanaParaFecha(fecha);
   var titulo = fecha.toLocaleDateString('es-AR', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
   document.getElementById('modal-titulo').textContent = titulo.charAt(0).toUpperCase() + titulo.slice(1);
-  var html = '';
+
+  var overlay = document.getElementById('modal-overlay');
+  var searchWrap = document.getElementById('modal-search-wrap');
+  var searchInput = document.getElementById('modal-search-input');
+
   if (calModo === 'admin') {
     var regs = todosRegistros.filter(function(r) { return r.semana === semana; });
-    var pres = regs.filter(function(r) { return r[diaKey]==='presencial'; });
-    var rem = regs.filter(function(r) { return r[diaKey]==='remoto'; });
-    if (pres.length === 0 && rem.length === 0) {
-      html = '<div class="modal-empty">Sin registros para este d\u00eda</div>';
-    } else {
-      if (pres.length > 0) html += '<div class="pill-group-label">Presencial ('+pres.length+')</div><div class="pill-row" style="margin-bottom:12px;">'+pres.map(function(r){return '<div class="pill presencial"><div class="pill-dot"></div>'+nc(r.nombre)+'</div>';}).join('')+'</div>';
-      if (rem.length > 0) html += '<div class="pill-group-label">Remoto ('+rem.length+')</div><div class="pill-row">'+rem.map(function(r){return '<div class="pill remoto"><div class="pill-dot"></div>'+nc(r.nombre)+'</div>';}).join('')+'</div>';
-    }
+    modalPres = regs.filter(function(r) { return r[diaKey]==='presencial'; })
+                    .map(function(r) { return r.nombre; })
+                    .sort(function(a,b){return a.localeCompare(b,'es');});
+    modalRem  = regs.filter(function(r) { return r[diaKey]==='remoto'; })
+                    .map(function(r) { return r.nombre; })
+                    .sort(function(a,b){return a.localeCompare(b,'es');});
+    var total = modalPres.length + modalRem.length;
+    // Mostrar buscador solo si hay varios
+    searchWrap.style.display = total > 6 ? 'block' : 'none';
+    searchInput.value = '';
+    renderModalAdmin('');
   } else {
+    modalPres = []; modalRem = [];
+    searchWrap.style.display = 'none';
     var reg2 = usuario.historial.find(function(r) { return r.semana === semana; });
     var val = reg2 ? reg2[diaKey] : null;
+    var html = '';
     if (!val) {
       html = '<div class="modal-empty">Sin registro para este d\u00eda</div>';
     } else {
-      html = val === 'presencial'
-        ? '<div class="pill presencial" style="display:inline-flex;"><div class="pill-dot"></div>Presencial</div>'
-        : '<div class="pill remoto" style="display:inline-flex;"><div class="pill-dot"></div>Remoto</div>';
+      var tipo = val === 'presencial' ? 'p' : 'r';
+      var label = val === 'presencial' ? 'Presencial' : 'Remoto';
+      html = '<div class="modal-list"><div class="modal-person '+tipo+'">'
+           + '<div class="modal-person-dot"></div>' + label + '</div></div>';
     }
+    document.getElementById('modal-contenido').innerHTML = html;
+  }
+
+  overlay.style.display = 'flex';
+  // Auto-focus buscador si está visible
+  if (searchWrap.style.display !== 'none') {
+    setTimeout(function(){ searchInput.focus(); }, 80);
+  }
+}
+
+function renderModalAdmin(query) {
+  var q = (query || '').toLowerCase().trim();
+  var filtPres = q ? modalPres.filter(function(n){ return n.toLowerCase().indexOf(q) !== -1; }) : modalPres;
+  var filtRem  = q ? modalRem.filter(function(n){  return n.toLowerCase().indexOf(q) !== -1; }) : modalRem;
+
+  if (modalPres.length === 0 && modalRem.length === 0) {
+    document.getElementById('modal-contenido').innerHTML = '<div class="modal-empty">Sin registros para este d\u00eda</div>';
+    return;
+  }
+  if (q && filtPres.length === 0 && filtRem.length === 0) {
+    document.getElementById('modal-contenido').innerHTML = '<div class="modal-no-results">Sin resultados para &ldquo;'+query+'&rdquo;</div>';
+    return;
+  }
+
+  var html = '';
+  if (filtPres.length > 0) {
+    html += '<div class="modal-section-title">Presencial <span class="modal-count p">'+filtPres.length+'</span></div>'
+          + '<div class="modal-list">'
+          + filtPres.map(function(n){
+              return '<div class="modal-person p"><div class="modal-person-dot"></div>'+n+'</div>';
+            }).join('')
+          + '</div>';
+  }
+  if (filtRem.length > 0) {
+    html += '<div class="modal-section-title" style="margin-top:'+(filtPres.length>0?'4px':'0')+';">Remoto <span class="modal-count r">'+filtRem.length+'</span></div>'
+          + '<div class="modal-list">'
+          + filtRem.map(function(n){
+              return '<div class="modal-person r"><div class="modal-person-dot"></div>'+n+'</div>';
+            }).join('')
+          + '</div>';
   }
   document.getElementById('modal-contenido').innerHTML = html;
-  document.getElementById('modal-overlay').style.display = 'flex';
 }
+
+function filtrarModal(query) {
+  renderModalAdmin(query);
+}
+
 function cerrarModal(e) {
   if (!e || e.target === document.getElementById('modal-overlay')) {
     document.getElementById('modal-overlay').style.display = 'none';
+    document.getElementById('modal-search-input').value = '';
   }
 }
 
@@ -1012,6 +1126,7 @@ function initMasivaTab() {
                    {dni:'',nombre:'',lun:null,mar:null,mie:null,jue:null,vie:null}];
   }
   renderMasivaTabla();
+  renderHistorialMasiva();
 }
 
 function renderMasivaTabla() {
@@ -1312,9 +1427,113 @@ async function enviarMasiva() {
   resEl.style.color = err > 0 && ok === 0 ? '#e03131' : '#0a7a4e';
   resEl.style.display = 'block';
   if (ok > 0) {
+    // Guardar en historial
+    guardarHistorialMasiva({
+      fecha: new Date().toISOString(),
+      usuario: usuario ? usuario.nombre : 'Desconocido',
+      semana: semana,
+      ok: ok,
+      err: err,
+      registros: validos.map(function(r){
+        return {nombre: r.nombre, dni: r.dni, lun: r.lun||'', mar: r.mar||'', mie: r.mie||'', jue: r.jue||'', vie: r.vie||''};
+      })
+    });
     cargarAdmin();
     actualizarEnviarMasiva();
+    renderHistorialMasiva();
   }
+}
+
+// ── HISTORIAL DE CARGAS MASIVAS ───────────────────
+var HIST_KEY = 'humand_masiva_historial';
+
+function guardarHistorialMasiva(entry) {
+  var hist = cargarHistorialMasiva();
+  hist.unshift(entry); // más reciente primero
+  if (hist.length > 30) hist = hist.slice(0, 30); // máximo 30 entradas
+  try { localStorage.setItem(HIST_KEY, JSON.stringify(hist)); } catch(e) {}
+}
+
+function cargarHistorialMasiva() {
+  try {
+    var raw = localStorage.getItem(HIST_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
+function limpiarHistorialMasiva() {
+  if (!confirm('¿Eliminar todo el historial de cargas masivas?')) return;
+  try { localStorage.removeItem(HIST_KEY); } catch(e) {}
+  renderHistorialMasiva();
+}
+
+function renderHistorialMasiva() {
+  var hist = cargarHistorialMasiva();
+  var lista = document.getElementById('masiva-historial-lista');
+  var btnLimpiar = document.getElementById('btn-limpiar-hist');
+  if (!lista) return;
+
+  if (hist.length === 0) {
+    lista.innerHTML = '<p style="color:#bbb;font-size:13px;text-align:center;padding:12px 0;">Todav\u00eda no se realizaron cargas masivas</p>';
+    if (btnLimpiar) btnLimpiar.style.display = 'none';
+    return;
+  }
+
+  if (btnLimpiar) btnLimpiar.style.display = 'inline';
+
+  var ds = ['lun','mar','mie','jue','vie'];
+  var labelsD = ['L','M','X','J','V'];
+
+  lista.innerHTML = hist.map(function(entry, idx) {
+    var fecha = new Date(entry.fecha);
+    var fechaTxt = fecha.toLocaleDateString('es-AR', {day:'2-digit', month:'short', year:'numeric'})
+                 + ' ' + fecha.toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
+    var initiales = entry.usuario.trim().split(' ');
+    var inic = ((initiales[0]||'')[0] + (initiales[1]||'')[0]).toUpperCase();
+
+    var detalle = '';
+    if (entry.registros && entry.registros.length > 0) {
+      detalle = entry.registros.map(function(r) {
+        var diasTxt = ds.map(function(d, i){
+          return r[d] ? '<span style="font-size:10px;font-weight:700;">'+ labelsD[i] +':'+(r[d]==='presencial'?'P':'R')+'</span>' : '';
+        }).filter(Boolean).join(' ');
+        return '<div class="hist-masiva-pill '+(entry.ok>0?'p':'x')+'" title="'+r.nombre+'">'
+          + nc(r.nombre)
+          + (diasTxt ? ' <span style="opacity:0.6;font-weight:500;">·</span> '+diasTxt : '')
+          + '</div>';
+      }).join('');
+    }
+
+    return '<div class="hist-masiva-item">'
+      + '<div class="hist-masiva-top">'
+      +   '<div class="hist-masiva-meta">'
+      +     '<div style="width:28px;height:28px;border-radius:50%;background:#eef0fd;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#516ADC;flex-shrink:0;">'+inic+'</div>'
+      +     '<div>'
+      +       '<div class="hist-masiva-quien">'+nc(entry.usuario)+'</div>'
+      +       '<div class="hist-masiva-semana">'+entry.semana+'</div>'
+      +     '</div>'
+      +   '</div>'
+      +   '<div style="text-align:right;">'
+      +     '<div class="hist-masiva-badges">'
+      +       (entry.ok > 0 ? '<span class="hist-masiva-ok">'+entry.ok+' guardados</span>' : '')
+      +       (entry.err > 0 ? '<span class="hist-masiva-err">'+entry.err+' errores</span>' : '')
+      +     '</div>'
+      +     '<div class="hist-masiva-fecha">'+fechaTxt+'</div>'
+      +   '</div>'
+      + '</div>'
+      + (detalle ? '<button class="hist-masiva-toggle" onclick="toggleDetalleMasiva(this, \'det-'+idx+'\')">Ver detalle ▾</button>'
+                 + '<div class="hist-masiva-detalle" id="det-'+idx+'">'+detalle+'</div>'
+                 : '')
+      + '</div>';
+  }).join('');
+}
+
+function toggleDetalleMasiva(btn, id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var abierto = el.classList.contains('open');
+  el.classList.toggle('open', !abierto);
+  btn.textContent = abierto ? 'Ver detalle \u25be' : 'Ocultar \u25b4';
 }
 
 // ── EVENTOS ───────────────────────────────────────
